@@ -8,7 +8,7 @@
     module.exports = factory(require('lodash') || require('underscore'));
   }
   else {
-    root.returnExports = factory(root['_']);
+    root.gumshoe = factory(root['_']);
   }
 }(this,
 
@@ -18,7 +18,7 @@ function (_) {
    * @file perfnow is a 0.14 kb window.performance.now high resolution timer polyfill with Date fallback
    * @author Daniel Lamb <dlamb.open.source@gmail.com>
    */
-  function perfnow(window) {
+  (function perfnow (window) {
     // make sure we have an object to work with
     if (!('performance' in window)) {
       window.performance = {};
@@ -34,14 +34,22 @@ function (_) {
       Date.now || function () {
         return new Date().getTime();
       };
-  }
-  perfnow(window);
+  })(window);
 
   var defaults = {
       transport: '',
     },
     config,
-    transports = {};
+    transports = {},
+    query = queryString.parse(location.search),
+    viewport = (function viewport() {
+      var e = window, a = 'inner';
+      if (!('innerWidth' in window )) {
+        a = 'client';
+        e = document.documentElement || document.body;
+      }
+      return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
+    })();
 
   function gumeshoe (options) {
     config = _.extend({}, defaults, options);
@@ -55,47 +63,78 @@ function (_) {
     }
   }
 
-  function uuidv4 (){
-    var d = performance.now();
-    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = (d + Math.random()*16)%16 | 0;
-      d = Math.floor(d/16);
-      return (c=='x' ? r : (r&0x3|0x8)).toString(16);
-    });
-    return uuid;
-  };
 
   function collect () {
-    var result = {};
+    var result = {
+      // utmcs Character set (e.g. ISO-88­59-1)
+      characterSet: document.characterSet || document.charset || document.inputEncoding || 'Unknown',
 
-// Enviro­nment Parameters
-// utmcs Character set (e.g. ISO-88­59-1)
-// utmfl Flash version
-// utmip IP address
-// utmje Java enabled? (1 = yes, 0 = no)
-// utmsc Screen colour depth (e.g. 24-bit)
-// utmsr Screen resolution
-// utmul Language code (e.g. en-us)
-// utmvp Viewport resolution
+      // utmje Java enabled?
+      javaEnabled: navigator.javaEnabled(),
 
-// Hit / Campaign Parameters
-// utmac Account ID (e.g. UA-123­456-1)
-// utmcc Analytics Cookie string
-// utmcn New campaign visit?
-// utmcr Repeat campaign visit?
-// utmdt Page title
-// utmhn Hostname
-// utmp  Page path
-// utmr  Full referral URL
+      // utmsc Screen colour depth (e.g. 24-bit)
+      colorDepth: screen.colorDepth,
 
-// Session
-// session guid
-// session hits
+      // utmsr Screen resolution
+      screenResolution: screen.width + 'x' + screen.height,
+
+      screenWidth: screen.width,
+      screenHeight: screen.height,
+      screenAvailWidth: screen.availWidth,
+      screenAvailHeight: screen.availHeight,
+      screenOrientationAngle: screen.orientation.angle,
+      screenOrientationType: screen.orientation.type,
+      screenPixelDepth: screen.pixelDepth,
+
+      // utmul Language code (e.g. en-us)
+      language: document.documentElement ? document.documentElement.lang : 'Unknown',
+
+      // utmvp Viewport resolution
+      viewportResolution: viewport.width + 'x' + viewport.height,
+
+      viewportWidth: viewport.width,
+      viewportHeight: viewport.height,
+
+      utmContent: query['utm-content'],
+      utmSource: query['utm-source'],
+      utmMedium: query['utm-medium'],
+      utmCampaign: query['utm-campaign'],
+
+      // utmdt Page title
+      title: document.title
+
+      hash: document.hash,
+      host: document.host,
+
+      // utmhn Hostname
+      hostName: document.hostName,
+
+      url: document.href,
+      origin: document.origin,
+
+      // utmp  Page path
+      path: document.pathname,
+
+      port: document.port || 80,
+      protocol: document.protocol,
+      queryString: document.search,
+
+      // utmr  Full referral URL
+      referer: document.referrer,
+
+      // gclid Gclid is a globally unique tracking parameter (Google Click Identifier)
+      googleClickId: query.gclid,
+
+      // utmip IP address
+      ipAddress: ''
+    };
 
     return result;
   }
 
   function send () {
+    var baseData = collect();
+
     _.each(config.transport, function (name) {
       var transport,
         data;
@@ -103,9 +142,11 @@ function (_) {
       if (name && transports[name]) {
         transport = transports[name];
 
-        data = transport.map();
+        // allow each transport to extend the data with more information
+        // or transform it how they'd like.
+        data = transport.map ? transport.map(baseData) : {};
 
-        transport.send(data);
+        transport.send(_.extend(baseData, data));
       }
     });
   }
@@ -118,27 +159,6 @@ function (_) {
     transports[tp.name] = tp;
   }
 
-  // transports
-
-  transport({
-
-    name: 'gilt',
-
-    collect: function () {
-
-    },
-
-    map: function () {
-
-    },
-
-    send: function () {
-
-    }
-
-  });
-
-  collect();
   send();
 
   return _.extend(gumshoe, {

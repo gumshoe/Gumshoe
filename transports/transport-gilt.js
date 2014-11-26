@@ -1,13 +1,24 @@
 transport({
 
-  name: 'gilt',
+  name: 'gilt-svc-event',
 
-  send: function () {
+  send: function (data) {
+    var noop = function () {},
+      contentType = 'application/vnd.event.gilt.v1+json';
 
+    reqwest({
+      url: '/svc-event/streams/web.pageview/events/' + data.uuid,
+      type: contentType,
+      headers: { 'Accept': contentType },
+      method: 'XPUT',
+      data: data,
+      error: noop,
+      success: noop
+    });
   },
 
-  map: function () {
-
+  map: function (data) {
+    return { uuid: '00000000-0000-0000-0000-000000000000' };
   }
 
 });
