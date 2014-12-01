@@ -78,7 +78,7 @@ function () {
       javaEnabled: navigator.javaEnabled(),
 
       // utmsc Screen colour depth (e.g. 24-bit)
-      colorDepth: screen.colorDepth,
+      colorDepth: screen.colorDepth + '',
 
       // utmsr Screen resolution
       screenResolution: screen.width + 'x' + screen.height,
@@ -89,7 +89,7 @@ function () {
       screenAvailHeight: screen.availHeight,
       screenOrientationAngle: screen.orientation.angle,
       screenOrientationType: screen.orientation.type,
-      screenPixelDepth: screen.pixelDepth,
+      screenPixelDepth: screen.pixelDepth + '',
 
       // utmul Language code (e.g. en-us)
       language: document.documentElement ? document.documentElement.lang : window.navigator.language || 'Unknown',

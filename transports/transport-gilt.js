@@ -8,9 +8,10 @@ gumshoe.transport({
 
     reqwest({
       url: '/svc-event/streams/web.test.pageview/events/' + data.uuid,
-      type: contentType,
+      contentType: contentType,
+      type: 'json',
       headers: { 'Accept': contentType },
-      method: 'XPUT',
+      method: 'PUT',
       data: store._.stringify(data),
       error: noop,
       success: noop
@@ -18,7 +19,7 @@ gumshoe.transport({
   },
 
   map: function (data) {
-    return { uuid: '00000000-0000-0000-0000-000000000000' };
+    return { uuid: '0c09b600-2218-11e4-b803-90e08f355b68' };
   }
 
 });
