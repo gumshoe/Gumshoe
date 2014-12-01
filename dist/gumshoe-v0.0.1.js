@@ -1113,7 +1113,7 @@ gumshoe.transport({
       contentType = 'application/vnd.event.gilt.v1+json';
 
     reqwest({
-      url: '/svc-event/streams/web.pageview/events/' + data.uuid,
+      url: '/svc-event/streams/web.test.pageview/events/' + data.uuid,
       contentType: contentType,
       type: 'json',
       headers: { 'Accept': contentType },
