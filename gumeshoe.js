@@ -30,6 +30,11 @@ function () {
     return '[object Array]' === Object.prototype.toString.call(obj);
   }
 
+  function isObject (obj) {
+    var type = typeof obj;
+    return type === 'function' || type === 'object' && !!obj;
+  };
+
   function isString(value) {
     return typeof value == 'string' || (value && typeof value == 'object' &&
       toString.call(value) == '[object String]') || false;
@@ -50,7 +55,7 @@ function () {
       return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
     })();
 
-  function gumeshoe (options) {
+  function gumshoe (options) {
     config = extend({}, defaults, options);
 
     // always ensure options.transport is an array.
@@ -60,6 +65,8 @@ function () {
     else if (!isArray(config.transport)) {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].'
     }
+
+    send();
   }
 
   function collect () {
@@ -85,7 +92,7 @@ function () {
       screenPixelDepth: screen.pixelDepth,
 
       // utmul Language code (e.g. en-us)
-      language: document.documentElement ? document.documentElement.lang : 'Unknown',
+      language: document.documentElement ? document.documentElement.lang : window.navigator.language || 'Unknown',
 
       // utmvp Viewport resolution
       viewportResolution: viewport.width + 'x' + viewport.height,
@@ -93,37 +100,38 @@ function () {
       viewportWidth: viewport.width,
       viewportHeight: viewport.height,
 
-      utmContent: query['utm-content'],
-      utmSource: query['utm-source'],
-      utmMedium: query['utm-medium'],
-      utmCampaign: query['utm-campaign'],
+      utmContent: query['utm-content'] || '',
+      utmSource: query['utm-source'] || '',
+      utmMedium: query['utm-medium'] || '',
+      utmCampaign: query['utm-campaign'] || '',
 
       // utmdt Page title
-      title: document.title
+      title: document.title,
 
-      hash: document.hash,
-      host: document.host,
+      hash: window.location.hash,
+      host: window.location.host,
 
       // utmhn Hostname
-      hostName: document.hostName,
+      hostName: window.location.hostname,
 
-      url: document.href,
-      origin: document.origin,
+      url: window.location.href,
+      origin: window.location.origin,
 
       // utmp  Page path
-      path: document.pathname,
+      path: window.location.pathname,
 
-      port: document.port || 80,
-      protocol: document.protocol,
-      queryString: document.search,
+      port: window.location.port || 80,
+      protocol: window.location.protocol,
+      queryString: window.location.search,
 
       // utmr  Full referral URL
       referer: document.referrer,
 
       userAgent: window.navigator.userAgent,
+      platform: window.navigator.platform,
 
       // gclid Gclid is a globally unique tracking parameter (Google Click Identifier)
-      googleClickId: query.gclid,
+      googleClickId: query.gclid || '',
 
       // utmip IP address
       ipAddress: ''
@@ -159,8 +167,6 @@ function () {
 
     transports[tp.name] = tp;
   }
-
-  send();
 
   return extend(gumshoe, {
     transport: transport

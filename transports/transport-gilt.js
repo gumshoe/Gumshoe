@@ -1,4 +1,4 @@
-transport({
+gumshoe.transport({
 
   name: 'gilt-svc-event',
 
@@ -11,7 +11,7 @@ transport({
       type: contentType,
       headers: { 'Accept': contentType },
       method: 'XPUT',
-      data: data,
+      data: store._.stringify(data),
       error: noop,
       success: noop
     });
