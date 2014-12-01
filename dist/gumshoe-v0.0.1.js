@@ -992,7 +992,7 @@ function () {
       config.transport = [config.transport];
     }
     else if (!isArray(config.transport)) {
-      throw 'Gumeshoe: Transport property must be a [String] or [Array].'
+      throw 'Gumshoe: Transport property must be a [String] or [Array].'
     }
 
     send();
@@ -1091,7 +1091,7 @@ function () {
 
   function transport (tp) {
     if (!tp.name) {
-      throw 'Gumeshoe: Transport [Object] must have a name defined.';
+      throw 'Gumshoe: Transport [Object] must have a name defined.';
     }
 
     transports[tp.name] = tp;

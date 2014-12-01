@@ -162,7 +162,7 @@ function () {
 
   function transport (tp) {
     if (!tp.name) {
-      throw 'Gumeshoe: Transport [Object] must have a name defined.';
+      throw 'Gumshoe: Transport [Object] must have a name defined.';
     }
 
     transports[tp.name] = tp;
