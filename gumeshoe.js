@@ -1,18 +1,39 @@
 (function (root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['lodash', 'underscore'], function (lodash, underscrore) {
-      factory(lodash || underscore);
+    define([], function () {
+      factory();
     });
   }
   else if (typeof exports === 'object') {
-    module.exports = factory(require('lodash') || require('underscore'));
+    module.exports = factory();
   }
   else {
-    root.gumshoe = factory(root['_']);
+    root.gumshoe = factory();
   }
 }(this,
 
-function (_) {
+function () {
+
+  function extend (obj) {
+    if (!isObject(obj)) return obj;
+    var source, prop;
+    for (var i = 1, length = arguments.length; i < length; i++) {
+      source = arguments[i];
+      for (prop in source) {
+        obj[prop] = source[prop];
+      }
+    }
+    return obj;
+  };
+
+  function isArray(obj) {
+    return '[object Array]' === Object.prototype.toString.call(obj);
+  }
+
+  function isString(value) {
+    return typeof value == 'string' || (value && typeof value == 'object' &&
+      toString.call(value) == '[object String]') || false;
+  }
 
   var defaults = {
       transport: '',
@@ -30,13 +51,13 @@ function (_) {
     })();
 
   function gumeshoe (options) {
-    config = _.extend({}, defaults, options);
+    config = extend({}, defaults, options);
 
     // always ensure options.transport is an array.
-    if (_.isString(config.transport)) {
+    if (isString(config.transport)) {
       config.transport = [config.transport];
     }
-    else if (!_.isArray(config.transport)) {
+    else if (!isArray(config.transport)) {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].'
     }
   }
@@ -99,6 +120,8 @@ function (_) {
       // utmr  Full referral URL
       referer: document.referrer,
 
+      userAgent: window.navigator.userAgent,
+
       // gclid Gclid is a globally unique tracking parameter (Google Click Identifier)
       googleClickId: query.gclid,
 
@@ -112,8 +135,9 @@ function (_) {
   function send () {
     var baseData = collect();
 
-    _.each(config.transport, function (name) {
-      var transport,
+    for(var i = 0; i < config.transport.length; i++) {
+      var name = config.transport[i],
+        transport,
         data;
 
       if (name && transports[name]) {
@@ -123,9 +147,9 @@ function (_) {
         // or transform it how they'd like.
         data = transport.map ? transport.map(baseData) : {};
 
-        transport.send(_.extend(baseData, data));
+        transport.send(extend(baseData, data));
       }
-    });
+    }
   }
 
   function transport (tp) {
@@ -138,7 +162,7 @@ function (_) {
 
   send();
 
-  return _.extend(gumshoe, {
+  return extend(gumshoe, {
     transport: transport
   });
 }

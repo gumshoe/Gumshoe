@@ -1,0 +1,50 @@
+curl -i -H "Content-Type: application/vnd.stream.gilt.v1+json" -H "Accept: application/vnd.stream.gilt.v1+json" -XPUT http://localhost:18402/streams/web.test.pageview -d '
+{
+  "id":"web.test.pageview",
+  "transport":"kinesis",
+  "schema":"com.gilt.web.test.PageView"
+}'
+
+curl -i -H "Content-Type: application/json" -H "Accept: application/json" -XGET http://localhost:15951/subjects/com.gilt.web.test.PageView/latestSchema
+
+curl -i -H "Content-Type: application/json" -H "Accept: application/json" -XPUT http://localhost:15951/subjects/com.gilt.web.test.PageView/schemas -d '
+{
+  "namespace": "com.gilt.web.test",
+  "type": "record",
+  "name": "PageView",
+  "fields": [
+    {"name": "uuid", "type": {"namespace": "gfc.avro", "type": "fixed", "size": 16, "name": "UUID"}},
+    {"name": "characterSet", "type": "string"},
+    {"name": "colorDepth", "type": "string"},
+    {"name": "googleClickId", "type": "string"},
+    {"name": "hash", "type": "string"},
+    {"name": "host", "type": "string"},
+    {"name": "hostName", "type": "string"},
+    {"name": "ipAddress", "type": "string"},
+    {"name": "javaEnabled", "type": "boolean"},
+    {"name": "language", "type": "string"},
+    {"name": "origin", "type": "string"},
+    {"name": "path", "type": "string"},
+    {"name": "port", "type": "int"},
+    {"name": "protocol", "type": "string"},
+    {"name": "queryString", "type": "string"},
+    {"name": "referer", "type": "string"},
+    {"name": "screenAvailHeight", "type": "int"},
+    {"name": "screenAvailWidth", "type": "int"},
+    {"name": "screenHeight", "type": "int"},
+    {"name": "screenOrientationAngle", "type": "int"},
+    {"name": "screenOrientationType", "type": "string"},
+    {"name": "screenPixelDepth", "type": "string"},
+    {"name": "screenResolution", "type": "string"},
+    {"name": "screenWidth", "type": "int"},
+    {"name": "title", "type": "string"},
+    {"name": "url", "type": "string"},
+    {"name": "utmCampaign", "type": "string"},
+    {"name": "utmContent", "type": "string"},
+    {"name": "utmMedium", "type": "string"},
+    {"name": "utmSource", "type": "string"},
+    {"name": "viewportHeight", "type": "int"},
+    {"name": "viewportResolution", "type": "string"},
+    {"name": "viewportWidth", "type": "int"}
+  ]
+}'
