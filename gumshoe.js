@@ -40,6 +40,16 @@ function () {
       toString.call(value) == '[object String]') || false;
   }
 
+  function uuidv4 (){
+    var d = performance.now();
+    var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = (d + Math.random()*16)%16 | 0;
+      d = Math.floor(d/16);
+      return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+    });
+    return uuid;
+  };
+
   var defaults = {
       transport: '',
     },
@@ -104,6 +114,7 @@ function () {
       utmSource: query['utm_source'] || '',
       utmMedium: query['utm_medium'] || '',
       utmCampaign: query['utm_campaign'] || '',
+      utmTerm: query['utm_term'] || '',
 
       // utmdt Page title
       title: document.title,
@@ -132,6 +143,12 @@ function () {
 
       // gclid Gclid is a globally unique tracking parameter (Google Click Identifier)
       googleClickId: query.gclid || '',
+
+      // promotional key: pkey
+      promotionKey: query.pkey || '',
+
+      // login key: lk
+      loginKey: query.lk || '',
 
       // utmip IP address
       ipAddress: ''
@@ -169,7 +186,8 @@ function () {
   }
 
   return extend(gumshoe, {
-    transport: transport
+    transport: transport,
+    uuid: uuidv4
   });
 }
 

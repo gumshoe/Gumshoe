@@ -1029,10 +1029,11 @@ function () {
       viewportWidth: viewport.width,
       viewportHeight: viewport.height,
 
-      utmContent: query['utm-content'] || '',
-      utmSource: query['utm-source'] || '',
-      utmMedium: query['utm-medium'] || '',
-      utmCampaign: query['utm-campaign'] || '',
+      utmContent: query['utm_content'] || '',
+      utmSource: query['utm_source'] || '',
+      utmMedium: query['utm_medium'] || '',
+      utmCampaign: query['utm_campaign'] || '',
+      utmTerm: query['utm_term'] || '',
 
       // utmdt Page title
       title: document.title,

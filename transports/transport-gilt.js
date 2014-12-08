@@ -19,7 +19,8 @@ gumshoe.transport({
   },
 
   map: function (data) {
-    return { uuid: '0c09b600-2218-11e4-b803-90e08f355b68' };
+
+    return { uuid: gumshoe.uuid() };
   }
 
 });

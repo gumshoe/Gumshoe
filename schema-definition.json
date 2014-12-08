@@ -2,7 +2,8 @@ curl -i -H "Content-Type: application/vnd.stream.gilt.v1+json" -H "Accept: appli
 {
   "id":"web.test.pageview",
   "transport":"kinesis",
-  "schema":"com.gilt.web.test.PageView"
+  "schema":"com.gilt.web.test.PageView",
+  "uuidVersion": 4
 }'
 
 curl -i -H "Content-Type: application/json" -H "Accept: application/json" -XGET http://localhost:15951/subjects/com.gilt.web.test.PageView/latestSchema
@@ -23,10 +24,13 @@ curl -i -H "Content-Type: application/json" -H "Accept: application/json" -XPUT 
     {"name": "ipAddress", "type": "string"},
     {"name": "javaEnabled", "type": "boolean"},
     {"name": "language", "type": "string"},
+    {"name": "loginKey", "type": "string"},
     {"name": "origin", "type": "string"},
     {"name": "path", "type": "string"},
     {"name": "port", "type": "int"},
+    {"name": "platform", "type": "string"},
     {"name": "protocol", "type": "string"},
+    {"name": "promotionKey", "type": "string"},
     {"name": "queryString", "type": "string"},
     {"name": "referer", "type": "string"},
     {"name": "screenAvailHeight", "type": "int"},
@@ -39,10 +43,12 @@ curl -i -H "Content-Type: application/json" -H "Accept: application/json" -XPUT 
     {"name": "screenWidth", "type": "int"},
     {"name": "title", "type": "string"},
     {"name": "url", "type": "string"},
+    {"name": "userAgent", "type": "string"},
     {"name": "utmCampaign", "type": "string"},
     {"name": "utmContent", "type": "string"},
     {"name": "utmMedium", "type": "string"},
     {"name": "utmSource", "type": "string"},
+    {"name": "utmTerm", "type": "string"},
     {"name": "viewportHeight", "type": "int"},
     {"name": "viewportResolution", "type": "string"},
     {"name": "viewportWidth", "type": "int"}
