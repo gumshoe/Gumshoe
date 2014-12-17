@@ -97,8 +97,8 @@ function () {
       screenHeight: screen.height,
       screenAvailWidth: screen.availWidth,
       screenAvailHeight: screen.availHeight,
-      screenOrientationAngle: screen.orientation.angle,
-      screenOrientationType: screen.orientation.type,
+      screenOrientationAngle: '',
+      screenOrientationType: '',
       screenPixelDepth: screen.pixelDepth + '',
 
       // utmul Language code (e.g. en-us)
@@ -153,6 +153,12 @@ function () {
       // utmip IP address
       ipAddress: ''
     };
+
+    // IE 8, 9 don't support this. Yay.
+    if (screen.orientation) {
+      result.screenOrientationAngle = screen.orientation.angle ? screen.orientation.angle : '';
+      screenOrientationType: screen.orientation.type ? screen.orientation.type : '';
+    }
 
     return result;
   }
