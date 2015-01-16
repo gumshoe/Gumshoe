@@ -1,0 +1,49 @@
+{
+  "name": "Gumshoe",
+  "version": "0.1.0",
+  "description": "An analytics and event tracking sleuth.",
+  "keywords": [
+    "tracking",
+    "events",
+    "google",
+    "ga",
+    "analytics",
+    "gumshoe",
+    "sleuth"
+  ],
+  "author": "Gilt Tech <gilt-tech@gilt.com>",
+  "maintainers": [
+    {
+      "name": "Andrew Powell",
+      "email": "andrew@shellscape.org"
+    }
+  ],
+  "main": "./dist/gumshoe-0.1.0.js",
+  "bugs": {
+    "url": "http://github.com/gilt/gumshoe/issues"
+  },
+  "homepage": "https://github.com/gilt/gumshoe",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "http://github.com/gilt/gumshoe/blob/master/LICENSE"
+    }
+  ],
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/gilt/gumshoe.git"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "gulp": "^3.8.10",
+    "gulp-add-src": "^0.2.0",
+    "gulp-concat": "^2.4.3",
+    "gulp-jshint": "^1.9.0",
+    "gulp-mocha": "^2.0.0",
+    "gulp-mocha-phantomjs": "^0.5.3",
+    "gulp-rename": "^1.2.0",
+    "gulp-replace": "^0.5.1",
+    "gulp-uglify": "^1.0.2",
+    "jshint-stylish": "^1.0.0"
+  }
+}
