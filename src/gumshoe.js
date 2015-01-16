@@ -161,7 +161,8 @@ function () {
         eventData: eventData,
         pageData: pageData,
         timestamp: (new Date()).getTime(),
-        timezoneOffset: (new Date()).getTimezoneOffset()
+        timezoneOffset: (new Date()).getTimezoneOffset(),
+        uuid: uuidv4()
       };
 
     for(var i = 0; i < config.transport.length; i++) {

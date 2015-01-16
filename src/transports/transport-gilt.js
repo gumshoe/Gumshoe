@@ -58,7 +58,6 @@
       }
 
       return {
-        uuid: gumshoe.uuid(),
         giltData: giltData
       };
     }
