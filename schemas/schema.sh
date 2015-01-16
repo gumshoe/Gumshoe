@@ -14,33 +14,38 @@ curl -i \
     {"name": "eventName", "type": "string"},
     {"name": "eventData", "type": ["null", "string"], "default": null}
 
-    {"name": "giltData", "type":
-        {"type": "record",
-         "name": "GiltData",
-         "namespace": "com.gilt.gumshoe.v1.GumshoeEvent.GiltData",
-         "fields": [
-            {"name": "store", "type": ["null", "string"], "default": null},
-            {"name": "section", "type": ["null", "string"], "default": null}
+    {"name": "timestamp", "type": "long"},
+    {"name": "timezoneOffset", "type": "long"},
 
-            {"name": "applicationName", "type": ["null", "string"], "default": null},
-            {"name": "channelKey", "type": ["null", "string"], "default": null},
-            {"name": "isLoyaltyUser", "type": ["null", "boolean"], "default": null},
-            {"name": "loyaltyStatus", "type": ["null", "string"], "default": null},
-            {"name": "hasPurchased", "type": ["null", "boolean"], "default": null},
-            {"name": "subsite", "type": ["null", "string"], "default": null},
-            {"name": "vendorUserId", "type": ["null", "string"], "default": null},
-            {"name": "abTests", "type": ["null", "string"], "default": null},
-            {"name": "timezone", "type": ["null", "string"], "default": null},
-            {"name": "isBotRequest", "type": ["null", "boolean"], "default": null}
-         ]
-        }
+    {"name": "giltData", "type":
+      {"type": "record",
+       "name": "GiltData",
+       "namespace": "com.gilt.gumshoe.v1.GumshoeEvent.GiltData",
+       "fields": [
+          {"name": "abTests", "type": ["null", "string"], "default": null},
+          {"name": "applicationName", "type": ["null", "string"], "default": null},
+          {"name": "channel", "type": ["null", "string"], "default": null},
+          {"name": "groups", "type": ["null", "string"], "default": null},
+          {"name": "hasPurchased", "type": ["null", "boolean"], "default": null},
+          {"name": "isBotRequest", "type": ["null", "boolean"], "default": null},
+          {"name": "isLoyaltyUser", "type": ["null", "boolean"], "default": null},
+          {"name": "loyaltyStatus", "type": ["null", "string"], "default": null},
+          {"name": "pricer", "type": ["null", "string"], "default": null},
+          {"name": "section", "type": ["null", "string"], "default": null},
+          {"name": "store", "type": ["null", "string"], "default": null},
+          {"name": "subsite", "type": ["null", "string"], "default": null},
+          {"name": "timezone", "type": ["null", "string"], "default": null},
+          {"name": "vendorUserId", "type": ["null", "string"], "default": null}
+        ]
+      }
     },
 
     {"name": "pageData", "type":
-      {"type": "record",
-       "name": "PageData",
-       "namespace": "com.gilt.gumshoe.v1.GumshoeEvent.PageData",
-       "fields": [
+      {
+        "type": "record",
+        "name": "PageData",
+        "namespace": "com.gilt.gumshoe.v1.GumshoeEvent.PageData",
+        "fields": [
           {"name": "characterSet", "type": "string"},
           {"name": "colorDepth", "type": "string"},
           {"name": "cookie", "type": "string"},
@@ -79,7 +84,7 @@ curl -i \
           {"name": "viewportHeight", "type": "int"},
           {"name": "viewportResolution", "type": "string"},
           {"name": "viewportWidth", "type": "int"}
-       ]
+        ]
       }
     },
   ]
