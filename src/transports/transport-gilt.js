@@ -1,4 +1,4 @@
-/* global reqwest, store */
+/* global reqwest, store, gilt */
 (function (root) {
 
   var gumshoe = root.gumshoe;
@@ -12,7 +12,7 @@
         contentType = 'application/vnd.event.gilt.v1+json';
 
       reqwest({
-        url: '/svc-event/streams/web.test.pageview/events/' + data.uuid,
+        url: '/svc-event/streams/com.gilt.gumshoe.v1.GumshoeEvent/events/' + data.uuid,
         contentType: contentType,
         type: 'json',
         headers: { 'Accept': contentType },
@@ -25,7 +25,42 @@
 
     map: function (data) {
 
-      return { uuid: gumshoe.uuid() };
+      var pageController,
+        get,
+        giltData;
+
+      if (gilt && gilt.require) {
+        pageController = gilt.require.get('common.page_controller');
+        get = function (name) {
+          return pageController.getProperty(name) || null;
+        };
+
+        if (pageController) {
+          data.ipAddress = get('ipAddress');
+
+          giltData = {
+            abTests: JSON.stringify(get('abTests')),
+            applicationName: get('applicationName'),
+            channel: get('channelKey'),
+            groups: get('groups'),
+            hasPurchased: get('hasPurchased'),
+            isBotRequest: get('isBotRequest'),
+            isLoyaltyUser: get('isLoyaltyUser'),
+            loyaltyStatus: get('loyaltyStatus'),
+            pricer: JSON.stringify(get('pricer')),
+            section: get('section'),
+            store: get('store') || get('storeKey'),
+            subsite: get('subsiteKey'),
+            timezone: get('timezone'),
+            vendorUserId: get('vendorUserId'),
+          };
+        }
+      }
+
+      return {
+        uuid: gumshoe.uuid(),
+        giltData: giltData
+      };
     }
 
   });

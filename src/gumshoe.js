@@ -77,40 +77,13 @@ function () {
       // utmcs Character set (e.g. ISO-8859-1)
       characterSet: document.characterSet || document.charset || document.inputEncoding || 'Unknown',
 
-      // utmje Java enabled?
-      javaEnabled: navigator.javaEnabled(),
-
       // utmsc Screen colour depth (e.g. 24-bit)
       colorDepth: screen.colorDepth + '',
 
-      // utmsr Screen resolution
-      screenResolution: screen.width + 'x' + screen.height,
+      cookie: document.cookie,
 
-      screenWidth: screen.width,
-      screenHeight: screen.height,
-      screenAvailWidth: screen.availWidth,
-      screenAvailHeight: screen.availHeight,
-      screenOrientationAngle: '',
-      screenOrientationType: '',
-      screenPixelDepth: screen.pixelDepth + '',
-
-      // utmul Language code (e.g. en-us)
-      language: document.documentElement ? document.documentElement.lang : window.navigator.language || 'Unknown',
-
-      // utmvp Viewport resolution
-      viewportResolution: viewport.width + 'x' + viewport.height,
-
-      viewportWidth: viewport.width,
-      viewportHeight: viewport.height,
-
-      utmContent: query.utm_content || '',
-      utmSource: query.utm_source || '',
-      utmMedium: query.utm_medium || '',
-      utmCampaign: query.utm_campaign || '',
-      utmTerm: query.utm_term || '',
-
-      // utmdt Page title
-      title: document.title,
+      // gclid Gclid is a globally unique tracking parameter (Google Click Identifier)
+      googleClickId: query.gclid || '',
 
       hash: window.location.hash,
       host: window.location.host,
@@ -118,33 +91,58 @@ function () {
       // utmhn Hostname
       hostName: window.location.hostname,
 
-      url: window.location.href,
+      // utmip IP address
+      ipAddress: '',
+
+      // utmje Java enabled?
+      javaEnabled: navigator.javaEnabled(),
+
+      // utmul Language code (e.g. en-us)
+      language: document.documentElement ? document.documentElement.lang : window.navigator.language || 'Unknown',
+
+      // login key: ?lk=
+      loginKey: query.lk || '',
+
       origin: window.location.origin,
 
       // utmp  Page path
       path: window.location.pathname,
-
+      platform: window.navigator.platform,
       port: window.location.port || 80,
+      // promotional key: pkey
+      promotionKey: query.pkey || '',
       protocol: window.location.protocol,
+
       queryString: window.location.search,
 
       // utmr  Full referral URL
       referer: document.referrer,
 
+      screenAvailHeight: screen.availHeight,
+      screenAvailWidth: screen.availWidth,
+      screenHeight: screen.height,
+      screenOrientationAngle: '',
+      screenOrientationType: '',
+      screenPixelDepth: screen.pixelDepth + '',
+      // utmsr Screen resolution
+      screenResolution: screen.width + 'x' + screen.height,
+      screenWidth: screen.width,
+
+      // utmdt Page title
+      title: document.title,
+
+      url: window.location.href,
       userAgent: window.navigator.userAgent,
-      platform: window.navigator.platform,
+      utmCampaign: query.utm_campaign || '',
+      utmContent: query.utm_content || '',
+      utmMedium: query.utm_medium || '',
+      utmSource: query.utm_source || '',
+      utmTerm: query.utm_term || '',
 
-      // gclid Gclid is a globally unique tracking parameter (Google Click Identifier)
-      googleClickId: query.gclid || '',
-
-      // promotional key: pkey
-      promotionKey: query.pkey || '',
-
-      // login key: lk
-      loginKey: query.lk || '',
-
-      // utmip IP address
-      ipAddress: ''
+      // utmvp Viewport resolution
+      viewportHeight: viewport.height,
+      viewportResolution: viewport.width + 'x' + viewport.height,
+      viewportWidth: viewport.width
     };
 
     // IE 8, 9 don't support this. Yay.
@@ -156,8 +154,15 @@ function () {
     return result;
   }
 
-  function send () {
-    var baseData = collect();
+  function send (eventName, eventData) {
+    var pageData = collect(),
+      baseData = {
+        eventName: eventName,
+        eventData: eventData,
+        pageData: pageData,
+        timestamp: (new Date()).getTime(),
+        timezoneOffset: (new Date()).getTimezoneOffset()
+      };
 
     for(var i = 0; i < config.transport.length; i++) {
       var name = config.transport[i],
