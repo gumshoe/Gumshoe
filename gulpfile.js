@@ -3,6 +3,7 @@
 var gulp = require('gulp'),
   addsrc = require('gulp-add-src'),
   concat = require('gulp-concat'),
+  del = require('del'),
   jshint = require('gulp-jshint'),
   rename = require('gulp-rename'),
   replace = require('gulp-replace'),
@@ -18,7 +19,13 @@ gulp.task('lint', function () {
     .pipe(jshint.reporter('fail'));
 });
 
+gulp.task('test', ['lint'], function () {
+
+});
+
 gulp.task('build', ['lint'], function () {
+
+  del.sync(['dist/**/*.js']);
 
   return gulp.src('src/gumshoe.js')
 
