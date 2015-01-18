@@ -33,6 +33,9 @@
     "type": "git",
     "url": "http://github.com/gilt/gumshoe.git"
   },
+  "scripts": {
+    "test": "gulp test"
+  },
   "dependencies": {},
   "devDependencies": {
     "chai": "^1.10.0",
