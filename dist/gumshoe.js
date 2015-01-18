@@ -969,7 +969,8 @@ function () {
     return uuid;
   }
 
-  var defaults = {
+  var exports,
+    defaults = {
       transport: '',
     },
     config,
@@ -995,7 +996,7 @@ function () {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].';
     }
 
-    send();
+    exports.__internal__.config = config;
   }
 
   function collect () {
@@ -1087,7 +1088,8 @@ function () {
         eventData: eventData,
         pageData: pageData,
         timestamp: (new Date()).getTime(),
-        timezoneOffset: (new Date()).getTimezoneOffset()
+        timezoneOffset: (new Date()).getTimezoneOffset(),
+        uuid: uuidv4()
       };
 
     for(var i = 0; i < config.transport.length; i++) {
@@ -1115,11 +1117,19 @@ function () {
     transports[tp.name] = tp;
   }
 
-  return extend(gumshoe, {
+  exports = extend(gumshoe, {
     version: '0.1.0',
+    send: send,
     transport: transport,
-    uuid: uuidv4
+    uuid: uuidv4,
+    __internal__: {
+      collect: collect,
+      config: config,
+      transports: transports
+    }
   });
+
+  return exports;
 }
 
 ));
@@ -1155,7 +1165,7 @@ function () {
         get,
         giltData;
 
-      if (gilt && gilt.require) {
+      if (typeof gilt !== 'undefined' && gilt && gilt.require) {
         pageController = gilt.require.get('common.page_controller');
         get = function (name) {
           return pageController.getProperty(name) || null;
@@ -1184,7 +1194,6 @@ function () {
       }
 
       return {
-        uuid: gumshoe.uuid(),
         giltData: giltData
       };
     }

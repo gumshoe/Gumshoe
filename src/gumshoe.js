@@ -43,7 +43,8 @@ function () {
     return uuid;
   }
 
-  var defaults = {
+  var exports,
+    defaults = {
       transport: '',
     },
     config,
@@ -69,7 +70,7 @@ function () {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].';
     }
 
-    send();
+    exports.__internal__.config = config;
   }
 
   function collect () {
@@ -190,11 +191,19 @@ function () {
     transports[tp.name] = tp;
   }
 
-  return extend(gumshoe, {
+  exports = extend(gumshoe, {
     version: '{package_version}',
+    send: send,
     transport: transport,
-    uuid: uuidv4
+    uuid: uuidv4,
+    __internal__: {
+      collect: collect,
+      config: config,
+      transports: transports
+    }
   });
+
+  return exports;
 }
 
 ));

@@ -5,6 +5,7 @@ var gulp = require('gulp'),
   concat = require('gulp-concat'),
   del = require('del'),
   jshint = require('gulp-jshint'),
+  mochaPhantomJS = require('gulp-mocha-phantomjs'),
   rename = require('gulp-rename'),
   replace = require('gulp-replace'),
   uglify = require('gulp-uglify'),
@@ -19,8 +20,9 @@ gulp.task('lint', function () {
     .pipe(jshint.reporter('fail'));
 });
 
-gulp.task('test', ['lint'], function () {
-
+gulp.task('test', ['build'], function () {
+  return gulp.src(['test/*.html'])
+      .pipe(mochaPhantomJS({}));
 });
 
 gulp.task('build', ['lint'], function () {

@@ -29,7 +29,7 @@
         get,
         giltData;
 
-      if (gilt && gilt.require) {
+      if (typeof gilt !== 'undefined' && gilt && gilt.require) {
         pageController = gilt.require.get('common.page_controller');
         get = function (name) {
           return pageController.getProperty(name) || null;
