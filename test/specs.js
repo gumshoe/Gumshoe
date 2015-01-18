@@ -62,14 +62,14 @@ describe('Gumshoe', function() {
   });
 
   it('should collect screen data', function () {
-    expect(data.screenAvailHeight).to.equal(940);
-    expect(data.screenAvailWidth).to.equal(1680);
-    expect(data.screenHeight).to.equal(1050);
+    expect(data.screenAvailHeight).to.be.above(0);
+    expect(data.screenAvailWidth).to.be.above(0);
+    expect(data.screenHeight).to.be.above(0);
     expect(data.screenOrientationAngle).to.exist();
     expect(data.screenOrientationType).to.exist();
     expect(data.screenPixelDepth).to.equal('32');
-    expect(data.screenResolution).to.equal('1680x1050');
-    expect(data.screenWidth).to.equal(1680);
+    expect(data.screenResolution).to.have.length.above(0);
+    expect(data.screenWidth).to.be.above(0);
   });
 
   it('should collect utm data', function () {
@@ -81,9 +81,9 @@ describe('Gumshoe', function() {
   });
 
   it('should collect viewport data', function () {
-    expect(data.viewportHeight).to.equal(300);
-    expect(data.viewportResolution).to.equal('400x300');
-    expect(data.viewportWidth).to.equal(400);
+    expect(data.viewportHeight).to.be.above(0);
+    expect(data.viewportResolution).to.have.length.above(0);
+    expect(data.viewportWidth).to.be.above(0);
   });
 
 });
