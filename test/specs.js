@@ -1,6 +1,8 @@
 
 describe('Gumshoe', function() {
 
+  this.timeout(5000);
+
   var data;
 
   it('should live in the global namespace', function () {
@@ -10,13 +12,19 @@ describe('Gumshoe', function() {
   it('should expose properties', function () {
     expect(gumshoe.version).to.exist();
 
-    gumshoe({ transport: 'gilt-svc-event' });
+    gumshoe({ transport: 'spec-transport', queueTimeout: 1000 });
   });
 
   it('should expose internal properties', function () {
     expect(gumshoe.__internal__).to.exist();
     expect(gumshoe.__internal__.config).to.exist();
+    expect(gumshoe.__internal__.storage).to.exist();
     expect(gumshoe.__internal__.transports).to.exist();
+  });
+
+  it('should set configuration', function () {
+    expect(gumshoe.__internal__.config.queueTimeout).to.equal(1000);
+    expect(gumshoe.__internal__.config.transport).to.include('spec-transport');
   });
 
   it('should expose methods', function () {
@@ -84,6 +92,42 @@ describe('Gumshoe', function() {
     expect(data.viewportHeight).to.be.above(0);
     expect(data.viewportResolution).to.have.length.above(0);
     expect(data.viewportWidth).to.be.above(0);
+  });
+
+  it('should fetch data from the transport.map method', function () {
+    data = gumshoe.__internal__.transports['spec-transport'].map(data);
+
+    expect(data.newProp).to.equal(1);
+    expect(data.ipAddress).to.equal('192.168.1.1');
+  });
+
+  it('should queue events', function (done) {
+    gumshoe.send('page.view', { foo: 'bar'});
+
+    expect(gumshoe.__internal__.queue).to.have.length(1);
+
+    var nevent = gumshoe.__internal__.queue[0];
+
+    expect(nevent).to.exist();
+    expect(nevent.eventName).to.equal('page.view');
+    expect(nevent.transportName).to.equal('spec-transport');
+    expect(nevent.data).to.exist();
+    expect(nevent.data.eventData).to.exist();
+    expect(nevent.data.pageData).to.exist();
+    expect(nevent.data.timestamp).to.be.above(0);
+    expect(nevent.data.timezoneOffset).to.exist();
+    expect(nevent.data.uuid).to.have.length.above(0);
+
+    expect(nevent.data.eventName).to.equal('page.view');
+    expect(nevent.data.eventData.foo).to.equal('bar');
+    expect(nevent.data.newProp).to.equal(1);
+    expect(nevent.data.ipAddress).to.equal('192.168.1.1');
+
+    setTimeout(function () {
+      // queue should be empty after our test event has been 'sent'
+      expect(gumshoe.__internal__.queue).to.have.length(0);
+      done();
+    }, 1100);
   });
 
 });

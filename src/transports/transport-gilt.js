@@ -26,8 +26,7 @@
     map: function (data) {
 
       var pageController,
-        get,
-        giltData;
+        get;
 
       if (typeof gilt !== 'undefined' && gilt && gilt.require) {
         pageController = gilt.require.get('common.page_controller');
@@ -38,7 +37,7 @@
         if (pageController) {
           data.ipAddress = get('ipAddress');
 
-          giltData = {
+          data.giltData = {
             abTests: JSON.stringify(get('abTests')),
             applicationName: get('applicationName'),
             channel: get('channelKey'),
@@ -57,9 +56,7 @@
         }
       }
 
-      return {
-        giltData: giltData
-      };
+      return data;
     }
 
   });

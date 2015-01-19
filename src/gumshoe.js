@@ -1,4 +1,4 @@
-/* global performance, queryString */
+/* global performance, queryString, store */
 (function (root, factory) {
   root.gumshoe = factory();
 }(this,
@@ -44,9 +44,12 @@ function () {
   }
 
   var exports,
+    queue = [],
     defaults = {
       transport: '',
+      queueTimeout: 100
     },
+    storage = store.namespace('gumshoe').session,
     config,
     transports = {},
     query = queryString.parse(location.search),
@@ -70,6 +73,7 @@ function () {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].';
     }
 
+    // expose this for testing purposes
     exports.__internal__.config = config;
   }
 
@@ -164,7 +168,8 @@ function () {
         timestamp: (new Date()).getTime(),
         timezoneOffset: (new Date()).getTimezoneOffset(),
         uuid: uuidv4()
-      };
+      },
+      transportFound = false;
 
     for(var i = 0; i < config.transport.length; i++) {
       var name = config.transport[i],
@@ -172,15 +177,60 @@ function () {
         data;
 
       if (name && transports[name]) {
+        transportFound = true;
         transport = transports[name];
 
         // allow each transport to extend the data with more information
-        // or transform it how they'd like.
-        data = transport.map ? transport.map(baseData) : {};
+        // or transform it how they'd like. transports cannot however,
+        // modify eventData sent from the client.
+        data = transport.map ? transport.map(baseData) : baseData;
+        data = extend(baseData, data);
 
-        transport.send(extend(baseData, data));
+        pushEvent(eventName, name, data);
+      }
+      else {
+        throw 'Gumshoe: The transport name: ' + name + ', doesn\'t map to a valid transport.';
       }
     }
+
+    if (!transportFound) {
+      throw 'Gumshoe: No valid transports were found.';
+    }
+  }
+
+  function nextEvent () {
+
+    if (!queue.length) {
+      return;
+    }
+
+    // granb the next event from the queue and remove it.
+    var nevent = queue.shift(),
+      transport = transports[nevent.transportName];
+
+    transport.send(nevent.data);
+
+    // put our newly modified queue in session storage
+    // we're doing this after we send the event to mitigate data loss
+    // in the event the request doesn't complete before the page changes
+    storage('queue', queue);
+
+    setTimeout(nextEvent, config.queueTimeout);
+  }
+
+  function pushEvent (eventName, transportName, data) {
+
+    // add the event data to the queue
+    queue.push({
+      eventName: eventName,
+      transportName: transportName,
+      data: data
+    });
+
+    // put our newly modified queue in session storage
+    storage('queue', queue);
+
+    setTimeout(nextEvent, config.queueTimeout);
   }
 
   function transport (tp) {
@@ -199,6 +249,8 @@ function () {
     __internal__: {
       collect: collect,
       config: config,
+      queue: queue,
+      storage: storage,
       transports: transports
     }
   });
