@@ -12,7 +12,7 @@ curl -i \
     {"name": "uuid", "type": {"namespace": "gfc.avro", "type": "fixed", "size": 16, "name": "UUID"}},
 
     {"name": "eventName", "type": "string"},
-    {"name": "eventData", "type": ["null", "string"], "default": null}
+    {"name": "eventData", "type": ["null", "string"], "default": null},
 
     {"name": "sessionUuid", "type": {"namespace": "gfc.avro", "type": "fixed", "size": 16, "name": "UUID"}},
 
@@ -88,6 +88,6 @@ curl -i \
           {"name": "viewportWidth", "type": "int"}
         ]
       }
-    },
+    }
   ]
 }'
