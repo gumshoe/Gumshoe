@@ -44,12 +44,12 @@ function () {
   }
 
   var exports,
-    queue = [],
     defaults = {
       transport: '',
       queueTimeout: 100
     },
     storage = store.namespace('gumshoe').session,
+    queue = storage('queue') || [],
     config,
     transports = {},
     query = queryString.parse(location.search),
