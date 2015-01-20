@@ -38,7 +38,7 @@
           data.ipAddress = get('ipAddress');
 
           data.giltData = {
-            abTests: JSON.stringify(get('abTests')),
+            abTests: JSON.stringify(get('abTests') || '{}'),
             applicationName: get('applicationName'),
             channel: get('channelKey'),
             groups: get('groups'),
@@ -46,7 +46,7 @@
             isBotRequest: get('isBotRequest'),
             isLoyaltyUser: get('isLoyaltyUser'),
             loyaltyStatus: get('loyaltyStatus'),
-            pricer: JSON.stringify(get('pricer')),
+            pricer: JSON.stringify(get('pricer') || '{}'),
             section: get('section'),
             store: get('store') || get('storeKey'),
             subsite: get('subsiteKey'),

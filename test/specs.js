@@ -101,6 +101,11 @@ describe('Gumshoe', function() {
     expect(data.ipAddress).to.equal('192.168.1.1');
   });
 
+  it('should have a uuid in session storage', function () {
+    expect(gumshoe.__internal__.storage('uuid')).to.exist();
+    expect(gumshoe.__internal__.storage('uuid')).to.have.length.above(0);
+  });
+
   it('should queue events', function (done) {
     gumshoe.send('page.view', { foo: 'bar'});
 
@@ -119,7 +124,7 @@ describe('Gumshoe', function() {
     expect(nevent.data.uuid).to.have.length.above(0);
 
     expect(nevent.data.eventName).to.equal('page.view');
-    expect(nevent.data.eventData.foo).to.equal('bar');
+    expect(JSON.parse(nevent.data.eventData).foo).to.equal('bar');
     expect(nevent.data.newProp).to.equal(1);
     expect(nevent.data.ipAddress).to.equal('192.168.1.1');
 

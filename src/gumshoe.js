@@ -73,6 +73,11 @@ function () {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].';
     }
 
+    // set a session based uuid
+    if (!storage('uuid')) {
+      storage('uuid', uuidv4());
+    }
+
     // expose this for testing purposes
     exports.__internal__.config = config;
   }
@@ -163,8 +168,9 @@ function () {
     var pageData = collect(),
       baseData = {
         eventName: eventName,
-        eventData: eventData,
+        eventData: eventData || {},
         pageData: pageData,
+        sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
         timezoneOffset: (new Date()).getTimezoneOffset(),
         uuid: uuidv4()
@@ -185,6 +191,10 @@ function () {
         // modify eventData sent from the client.
         data = transport.map ? transport.map(baseData) : baseData;
         data = extend(baseData, data);
+
+        if (!isString(data.eventData)) {
+          data.eventData = JSON.stringify(data.eventData);
+        }
 
         pushEvent(eventName, name, data);
       }

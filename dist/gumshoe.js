@@ -999,6 +999,11 @@ function () {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].';
     }
 
+    // set a session based uuid
+    if (!storage('uuid')) {
+      storage('uuid', uuidv4());
+    }
+
     // expose this for testing purposes
     exports.__internal__.config = config;
   }
@@ -1089,8 +1094,9 @@ function () {
     var pageData = collect(),
       baseData = {
         eventName: eventName,
-        eventData: eventData,
+        eventData: eventData || {},
         pageData: pageData,
+        sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
         timezoneOffset: (new Date()).getTimezoneOffset(),
         uuid: uuidv4()
@@ -1111,6 +1117,10 @@ function () {
         // modify eventData sent from the client.
         data = transport.map ? transport.map(baseData) : baseData;
         data = extend(baseData, data);
+
+        if (!isString(data.eventData)) {
+          data.eventData = JSON.stringify(data.eventData);
+        }
 
         pushEvent(eventName, name, data);
       }
@@ -1168,7 +1178,7 @@ function () {
   }
 
   exports = extend(gumshoe, {
-    version: '0.1.0',
+    version: '0.1.1',
     send: send,
     transport: transport,
     uuid: uuidv4,
@@ -1226,7 +1236,7 @@ function () {
           data.ipAddress = get('ipAddress');
 
           data.giltData = {
-            abTests: JSON.stringify(get('abTests')),
+            abTests: JSON.stringify(get('abTests') || '{}'),
             applicationName: get('applicationName'),
             channel: get('channelKey'),
             groups: get('groups'),
@@ -1234,7 +1244,7 @@ function () {
             isBotRequest: get('isBotRequest'),
             isLoyaltyUser: get('isLoyaltyUser'),
             loyaltyStatus: get('loyaltyStatus'),
-            pricer: JSON.stringify(get('pricer')),
+            pricer: JSON.stringify(get('pricer') || '{}'),
             section: get('section'),
             store: get('store') || get('storeKey'),
             subsite: get('subsiteKey'),

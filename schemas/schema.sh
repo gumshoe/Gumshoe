@@ -14,6 +14,8 @@ curl -i \
     {"name": "eventName", "type": "string"},
     {"name": "eventData", "type": ["null", "string"], "default": null}
 
+    {"name": "sessionUuid", "type": {"namespace": "gfc.avro", "type": "fixed", "size": 16, "name": "UUID"}},
+
     {"name": "timestamp", "type": "long"},
     {"name": "timezoneOffset", "type": "long"},
 
