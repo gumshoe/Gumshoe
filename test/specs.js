@@ -36,6 +36,7 @@ describe('Gumshoe', function() {
 
   it('should collect data', function () {
     data = gumshoe.__internal__.collect();
+
     expect(data).to.exist();
   });
 
