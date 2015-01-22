@@ -1,7 +1,25 @@
 /* global reqwest, store, gilt */
 (function (root) {
 
-  var gumshoe = root.gumshoe;
+  var gumshoe = root.gumshoe,
+    defaults = {
+      giltData: {
+        abTests: '{}',
+        applicationName: '',
+        channel: '',
+        groups: '',
+        hasPurchased: false,
+        isBotRequest: false,
+        isLoyaltyUser: false,
+        loyaltyStatus: '',
+        pricer: '{}',
+        section: '',
+        store: '',
+        subsite: '',
+        timezone: '',
+        vendorUserId: ''
+      }
+    };
 
   gumshoe.transport({
 
@@ -26,18 +44,18 @@
     map: function (data) {
 
       var pageController,
-        get;
+        get = function (name) {
+          return pageController.getProperty(name) || null;
+        },
+        result = gumshoe.extend({}, defaults);
 
       if (typeof gilt !== 'undefined' && gilt && gilt.require) {
         pageController = gilt.require.get('common.page_controller');
-        get = function (name) {
-          return pageController.getProperty(name) || null;
-        };
 
         if (pageController) {
           data.ipAddress = get('ipAddress');
 
-          data.giltData = {
+          result = gumshoe.extend(result, {
             abTests: JSON.stringify(get('abTests') || '{}'),
             applicationName: get('applicationName'),
             channel: get('channelKey'),
@@ -51,12 +69,12 @@
             store: get('store') || get('storeKey'),
             subsite: get('subsiteKey'),
             timezone: get('timezone'),
-            vendorUserId: get('vendorUserId'),
-          };
+            vendorUserId: get('vendorUserId')
+          });
         }
       }
 
-      return data;
+      return gumshoe.extend(data, result);
     }
 
   });
