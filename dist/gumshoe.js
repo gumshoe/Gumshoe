@@ -1079,12 +1079,35 @@ function () {
       viewportHeight: viewport.height,
       viewportResolution: viewport.width + 'x' + viewport.height,
       viewportWidth: viewport.width
-    };
+    },
+
+    intFields = [
+      'port', 'screenAvailHeight', 'screenAvailWidth', 'screenHeight',
+      'screenOrientationAngle', 'screenWidth', 'viewportHeight', 'viewportWidth'
+    ],
+    prop,
+    value;
 
     // IE 8, 9 don't support this. Yay.
     if (screen.orientation) {
-      result.screenOrientationAngle = screen.orientation.angle ? screen.orientation.angle : '';
+      result.screenOrientationAngle = parseInt(screen.orientation.angle ? screen.orientation.angle : '0');
       result.screenOrientationType = screen.orientation.type ? screen.orientation.type : '';
+
+      if (isNaN(result.screenOrientationAngle)) {
+        result.screenOrientationAngle = 0;
+      }
+    }
+
+    // assert that these values are ints
+    for (var i = 0; i < intFields.length; i++) {
+      prop = intFields[i];
+      value = parseInt(result[prop]);
+
+      if (isNaN(value)) {
+        value = 0;
+      }
+
+      result[prop] = value;
     }
 
     return result;
@@ -1116,6 +1139,8 @@ function () {
         // or transform it how they'd like. transports cannot however,
         // modify eventData sent from the client.
         data = transport.map ? transport.map(baseData) : baseData;
+
+        // extend our data with whatever came back from the transport
         data = extend(baseData, data);
 
         if (!isString(data.eventData)) {
@@ -1179,6 +1204,7 @@ function () {
 
   exports = extend(gumshoe, {
     version: '0.1.1',
+    extend: extend,
     send: send,
     transport: transport,
     uuid: uuidv4,
@@ -1199,7 +1225,25 @@ function () {
 /* global reqwest, store, gilt */
 (function (root) {
 
-  var gumshoe = root.gumshoe;
+  var gumshoe = root.gumshoe,
+    defaults = {
+      giltData: {
+        abTests: '{}',
+        applicationName: '',
+        channel: '',
+        groups: '',
+        hasPurchased: false,
+        isBotRequest: false,
+        isLoyaltyUser: false,
+        loyaltyStatus: '',
+        pricer: '{}',
+        section: '',
+        store: '',
+        subsite: '',
+        timezone: '',
+        vendorUserId: ''
+      }
+    };
 
   gumshoe.transport({
 
@@ -1224,18 +1268,18 @@ function () {
     map: function (data) {
 
       var pageController,
-        get;
+        get = function (name) {
+          return pageController.getProperty(name) || null;
+        },
+        result = gumshoe.extend({}, defaults);
 
       if (typeof gilt !== 'undefined' && gilt && gilt.require) {
         pageController = gilt.require.get('common.page_controller');
-        get = function (name) {
-          return pageController.getProperty(name) || null;
-        };
 
         if (pageController) {
           data.ipAddress = get('ipAddress');
 
-          data.giltData = {
+          result = gumshoe.extend(result, {
             abTests: JSON.stringify(get('abTests') || '{}'),
             applicationName: get('applicationName'),
             channel: get('channelKey'),
@@ -1249,12 +1293,12 @@ function () {
             store: get('store') || get('storeKey'),
             subsite: get('subsiteKey'),
             timezone: get('timezone'),
-            vendorUserId: get('vendorUserId'),
-          };
+            vendorUserId: get('vendorUserId')
+          });
         }
       }
 
-      return data;
+      return gumshoe.extend(data, result);
     }
 
   });
