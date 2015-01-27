@@ -1274,7 +1274,10 @@ function () {
         result = gumshoe.extend({}, defaults);
 
       if (typeof gilt !== 'undefined' && gilt && gilt.require) {
-        pageController = gilt.require.get('common.page_controller');
+        try {
+          pageController = gilt.require.get('common.page_controller');
+        }
+        catch (e) { }
 
         if (pageController) {
           data.ipAddress = get('ipAddress');
