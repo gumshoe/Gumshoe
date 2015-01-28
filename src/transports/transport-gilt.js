@@ -27,18 +27,28 @@
 
     send: function (data) {
       var noop = function () {},
+        url = '',
         contentType = 'application/vnd.event.gilt.v1+json';
 
-      reqwest({
-        url: '/svc-event/streams/com.gilt.gumshoe.v1.GumshoeEvent/events/' + data.uuid,
-        contentType: contentType,
-        type: 'json',
-        headers: { 'Accept': contentType },
-        method: 'PUT',
-        data: store._.stringify(data),
-        error: noop,
-        success: noop
-      });
+      try {
+        url = '/svc-event/streams/com.gilt.gumshoe.v1.GumshoeEvent/events/' + data.uuid;
+
+        reqwest({
+          url: url,
+          contentType: contentType,
+          type: 'json',
+          headers: { 'Accept': contentType },
+          method: 'PUT',
+          data: store._.stringify(data),
+          error: noop,
+          success: noop
+        });
+      }
+      catch (e) {
+        if (typeof console !== undefined) {
+          (console.error || console.log).call(console, 'Gumshoe Error: ' + url + '\n\n' + e);
+        }
+      }
     },
 
     map: function (data) {
