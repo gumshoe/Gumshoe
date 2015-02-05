@@ -925,11 +925,9 @@
 })(window, window.define);
 
 /* global performance, queryString, store */
-(function (root, factory) {
-  root.gumshoe = factory();
-}(this,
+(function (root) {
 
-function () {
+  var store = root.store;
 
   function extend (obj) {
     if (!isObject(obj)) {
@@ -1203,7 +1201,7 @@ function () {
   }
 
   exports = extend(gumshoe, {
-    version: '0.2.0',
+    version: '0.2.1',
     extend: extend,
     send: send,
     transport: transport,
@@ -1217,7 +1215,6 @@ function () {
     }
   });
 
-  return exports;
-}
+  root.gumshoe = exports;
 
-));
+})(this);

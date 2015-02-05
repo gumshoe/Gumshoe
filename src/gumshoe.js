@@ -1,9 +1,7 @@
 /* global performance, queryString, store */
-(function (root, factory) {
-  root.gumshoe = factory();
-}(this,
+(function (root) {
 
-function () {
+  var store = root.store;
 
   function extend (obj) {
     if (!isObject(obj)) {
@@ -291,7 +289,6 @@ function () {
     }
   });
 
-  return exports;
-}
+  root.gumshoe = exports;
 
-));
+})(this);
