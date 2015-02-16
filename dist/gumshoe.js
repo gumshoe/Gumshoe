@@ -1,3 +1,15 @@
+// polyfill for String.prototype.trim for IE8
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim
+if (!String.prototype.trim) {
+  (function() {
+    // Make sure we trim BOM and NBSP
+    var rtrim = /^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g;
+    String.prototype.trim = function() {
+      return this.replace(rtrim, '');
+    };
+  })();
+}
+
   /**
    * @file perfnow is a 0.14 kb window.performance.now high resolution timer polyfill with Date fallback
    * @author Daniel Lamb <dlamb.open.source@gmail.com>
@@ -1201,7 +1213,7 @@
   }
 
   exports = extend(gumshoe, {
-    version: '0.2.1',
+    version: '0.2.2',
     extend: extend,
     send: send,
     transport: transport,
