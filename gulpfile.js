@@ -21,7 +21,7 @@ gulp.task('lint', function () {
 });
 
 gulp.task('test', ['build'], function () {
-  return gulp.src(['test/*.html'])
+  return gulp.src(['test/**/*.html'])
       .pipe(mochaPhantomJS({}));
 });
 

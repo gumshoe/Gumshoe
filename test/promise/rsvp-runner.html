@@ -1,0 +1,51 @@
+<!doctype html>
+<html>
+<head>
+  <title>Test: Gumshoe Promise - rsvp.js</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../node_modules/gulp-mocha/node_modules/mocha/mocha.css" rel="stylesheet">
+</head>
+<body>
+  <div id="mocha"></div>
+  <script src="../../node_modules/gulp-mocha/node_modules/mocha/mocha.js"></script>
+  <script src="../../node_modules/chai/chai.js"></script>
+  <script>mocha.setup('bdd')</script>
+
+  <script src="../../lib/perfnow.js"></script>
+  <script src="../../lib/query-string.js"></script>
+  <script src="../../lib/reqwest.js"></script>
+  <script src="../../lib/store2.js"></script>
+
+  <script src="http://rsvpjs-builds.s3.amazonaws.com/rsvp-latest.js"></script>
+  <script src="rsvp-specs.js"></script>
+
+  <script>
+    var expect = chai.expect,
+      assert = chai.assert;
+
+    // simulate the browser loading gumshoe later
+    setTimeout(function() {
+      var gumshoe = document.createElement('script'),
+        fixtures = document.createElement('script'),
+        firstScript = document.getElementsByTagName('script')[0];
+
+      gumshoe.async = true;
+      gumshoe.src = '../../src/gumshoe.js';
+
+      fixtures.async = true;
+      fixtures.src = '../fixtures.js';
+
+      firstScript.parentNode.insertBefore(gumshoe, firstScript);
+      firstScript.parentNode.insertBefore(fixtures, gumshoe.nextSibling);
+    }, 1000);
+
+    if (window.mochaPhantomJS) {
+      mochaPhantomJS.run()
+    }
+    else {
+      mocha.run()
+    }
+ </script>
+</body>
+</html>

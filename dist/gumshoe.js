@@ -10,6 +10,37 @@ if (!String.prototype.trim) {
   })();
 }
 
+// Production steps of ECMA-262, Edition 5, 15.4.4.21
+// Reference: http://es5.github.io/#x15.4.4.21
+if (!Array.prototype.reduce) {
+  Array.prototype.reduce = function(callback /*, initialValue*/) {
+    'use strict';
+    if (this == null) {
+      throw new TypeError('Array.prototype.reduce called on null or undefined');
+    }
+    if (typeof callback !== 'function') {
+      throw new TypeError(callback + ' is not a function');
+    }
+    var t = Object(this), len = t.length >>> 0, k = 0, value;
+    if (arguments.length == 2) {
+      value = arguments[1];
+    } else {
+      while (k < len && ! k in t) {
+        k++; 
+      }
+      if (k >= len) {
+        throw new TypeError('Reduce of empty array with no initial value');
+      }
+      value = t[k++];
+    }
+    for (; k < len; k++) {
+      if (k in t) {
+        value = callback(value, t[k], k, t);
+      }
+    }
+    return value;
+  };
+}
   /**
    * @file perfnow is a 0.14 kb window.performance.now high resolution timer polyfill with Date fallback
    * @author Daniel Lamb <dlamb.open.source@gmail.com>
@@ -955,8 +986,12 @@ if (!String.prototype.trim) {
     return obj;
   }
 
-  function isArray(obj) {
+  function isArray (obj) {
     return '[object Array]' === Object.prototype.toString.call(obj);
+  }
+
+  function isFunction (obj) {
+    return ('' + typeof obj) === 'function';
   }
 
   function isObject (obj) {
@@ -964,7 +999,7 @@ if (!String.prototype.trim) {
     return type === 'function' || type === 'object' && !!obj;
   }
 
-  function isString(value) {
+  function isString (value) {
     return typeof value == 'string' || (value && typeof value == 'object' &&
       Object.prototype.toString.call(value) == '[object String]') || false;
   }
@@ -1227,6 +1262,18 @@ if (!String.prototype.trim) {
     }
   });
 
-  root.gumshoe = exports;
+  if (root.gumshoe) {
+
+    root.gumshoe = extend(root.gumshoe, exports);
+
+    // if you've set this up, and deferred is not a Promise/A deferred
+    // then we're not going to hold your hand. this will throw an error.
+    if (root.gumshoe.ready) {
+      root.gumshoe.ready.resolve();
+    }
+  }
+  else {
+    root.gumshoe = exports;
+  }
 
 })(this);

@@ -17,8 +17,12 @@
     return obj;
   }
 
-  function isArray(obj) {
+  function isArray (obj) {
     return '[object Array]' === Object.prototype.toString.call(obj);
+  }
+
+  function isFunction (obj) {
+    return ('' + typeof obj) === 'function';
   }
 
   function isObject (obj) {
@@ -26,7 +30,7 @@
     return type === 'function' || type === 'object' && !!obj;
   }
 
-  function isString(value) {
+  function isString (value) {
     return typeof value == 'string' || (value && typeof value == 'object' &&
       Object.prototype.toString.call(value) == '[object String]') || false;
   }
@@ -289,6 +293,18 @@
     }
   });
 
-  root.gumshoe = exports;
+  if (root.gumshoe) {
+
+    root.gumshoe = extend(root.gumshoe, exports);
+
+    // if you've set this up, and deferred is not a Promise/A deferred
+    // then we're not going to hold your hand. this will throw an error.
+    if (root.gumshoe.ready) {
+      root.gumshoe.ready.resolve();
+    }
+  }
+  else {
+    root.gumshoe = exports;
+  }
 
 })(this);
