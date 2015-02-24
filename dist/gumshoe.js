@@ -1248,7 +1248,7 @@ if (!Array.prototype.reduce) {
   }
 
   exports = extend(gumshoe, {
-    version: '0.2.2',
+    version: '0.3.0',
     extend: extend,
     send: send,
     transport: transport,
@@ -1266,9 +1266,11 @@ if (!Array.prototype.reduce) {
 
     root.gumshoe = extend(root.gumshoe, exports);
 
-    // if you've set this up, and deferred is not a Promise/A deferred
-    // then we're not going to hold your hand. this will throw an error.
     if (root.gumshoe.ready) {
+      if (!isFunction(root.gumshoe.ready.resolve)) {
+        throw 'Gumshoe: gumshoe.ready was predefined, but is not a Promise/A deferred.';
+      }
+
       root.gumshoe.ready.resolve();
     }
   }

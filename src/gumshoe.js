@@ -298,8 +298,6 @@
     root.gumshoe = extend(root.gumshoe, exports);
 
     if (root.gumshoe.ready) {
-      // if you've set this up, and deferred is not a Promise/A deferred
-      // then we're not going to hold your hand. this will throw an error.
       if (!isFunction(root.gumshoe.ready.resolve)) {
         throw 'Gumshoe: gumshoe.ready was predefined, but is not a Promise/A deferred.';
       }
