@@ -84,6 +84,76 @@
     exports.__internal__.config = config;
   }
 
+  function each (obj, iterator, context) {
+    if (obj === null) {
+      return;
+    }
+
+    if (Array.prototype.forEach && obj.forEach === Array.prototype.forEach) {
+      obj.forEach(iterator, context);
+    }
+    else if (obj.length === +obj.length) {
+      for (var i = 0, l = obj.length; i < l; i++) {
+        if (iterator.call(context, obj[i], i, obj) === {}) {
+          return;
+        }
+      }
+    }
+    else {
+      for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          if (iterator.call(context, obj[key], key, obj) === {}) {
+            return;
+          }
+        }
+      }
+    }
+  }
+
+  function map (obj, iterator, context) {
+    var results = [];
+
+    if (!obj) {
+      return results;
+    }
+
+    if (Array.prototype.map && obj.map === Array.prototype.map) {
+      return obj.map(iterator, context);
+    }
+
+    each(obj, function(value, index, list) {
+      results[results.length] = iterator.call(context, value, index, list);
+    });
+
+    return results;
+  }
+
+  function collectPlugins () {
+    var result,
+      plugins = navigator.plugins || [];
+
+    result = map(plugins, function (plugin) {
+      var mimeTypes = map(plugin, function (mimeType) {
+        var type = mimeType.type;
+
+        if (mimeType.suffixes) {
+          type += '~' + mimeType.suffixes;
+        }
+
+        return type;
+      });
+
+      return {
+        description: plugin.description,
+        filename: plugin.filename,
+        mimeTypes: mimeTypes,
+        name: plugin.name
+      };
+    });
+
+    return result;
+  }
+
   function collect () {
     var result = {
       // utmcs Character set (e.g. ISO-8859-1)
@@ -120,6 +190,7 @@
       // utmp  Page path
       path: window.location.pathname,
       platform: window.navigator.platform,
+      plugins: collectPlugins(),
       port: window.location.port || 80,
       // promotional key: pkey
       promotionKey: query.pkey || '',

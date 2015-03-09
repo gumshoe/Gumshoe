@@ -41,21 +41,44 @@ describe('Gumshoe', function() {
   });
 
   it('should collect basic data', function () {
+
     expect(data.characterSet).to.equal('UTF-8');
-    expect(data.colorDepth).to.equal('32');
+
+    if (window.mochaPhantomJS) {
+      expect(data.colorDepth).to.equal('32');
+    }
+
     expect(data.cookie).to.exist();
     expect(data.googleClickId).to.exist();
     expect(data.hash).to.exist();
     expect(data.host).to.exist();
     expect(data.hostName).to.exist();
     expect(data.ipAddress).to.exist();
-    expect(data.javaEnabled).to.be.false();
+
+    if (window.mochaPhantomJS) {
+      expect(data.javaEnabled).to.be.false();
+    }
+    else {
+      expect(data.javaEnabled).to.be.true();
+    }
+
     expect(data.language).to.exist();
     expect(data.loginKey).to.exist();
     expect(data.origin).to.equal('file://');
     expect(data.path).to.exist();
 
     expect(data.platform).to.exist();
+
+    // this test should be run manually in a browser.
+    // unfortunately faking plugin data isn't reliable
+    // and is difficult.
+    if (!window.mochaPhantomJS) {
+      expect(data.plugins).to.have.length.above(0);
+    }
+    else {
+      expect(data.plugins).to.have.length(0);
+    }
+
     expect(data.port).to.equal(80);
     expect(data.promotionKey).to.exist();
     expect(data.protocol).to.equal('file:');
@@ -67,7 +90,10 @@ describe('Gumshoe', function() {
     expect(data.url).to.have.string('test/runner.html');
 
     expect(data.userAgent).to.have.length.above(0);
-    expect(data.userAgent).to.have.string('PhantomJS');
+
+    if (window.mochaPhantomJS) {
+      expect(data.userAgent).to.have.string('PhantomJS');
+    }
   });
 
   it('should collect screen data', function () {
@@ -76,7 +102,11 @@ describe('Gumshoe', function() {
     expect(data.screenHeight).to.be.above(0);
     expect(data.screenOrientationAngle).to.exist();
     expect(data.screenOrientationType).to.exist();
-    expect(data.screenPixelDepth).to.equal('32');
+
+    if (window.mochaPhantomJS) {
+      expect(data.screenPixelDepth).to.equal('32');
+    }
+
     expect(data.screenResolution).to.have.length.above(0);
     expect(data.screenWidth).to.be.above(0);
   });
