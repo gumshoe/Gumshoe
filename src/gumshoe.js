@@ -290,8 +290,14 @@
         // extend our data with whatever came back from the transport
         data = extend(baseData, data);
 
+        // TODO: remove this. gumshoe shouldn't care what format this is in
         if (!isString(data.eventData)) {
           data.eventData = JSON.stringify(data.eventData);
+        }
+
+        // TODO: remove this. gumshoe shouldn't care what format this is in
+        if (!isString(data.pageData.plugins)) {
+          data.pageData.plugins = JSON.stringify(data.pageData.plugins);
         }
 
         pushEvent(eventName, name, data);
