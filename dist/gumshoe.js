@@ -1154,7 +1154,8 @@ if (!Array.prototype.reduce) {
       // login key: ?lk=
       loginKey: query.lk || '',
 
-      origin: window.location.origin,
+      // IE9 doesn't support this
+      origin: window.location.origin || '',
 
       // utmp  Page path
       path: window.location.pathname,
@@ -1325,7 +1326,7 @@ if (!Array.prototype.reduce) {
   }
 
   exports = extend(gumshoe, {
-    version: '0.4.0',
+    version: '0.4.2',
     extend: extend,
     send: send,
     transport: transport,

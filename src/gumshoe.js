@@ -185,7 +185,8 @@
       // login key: ?lk=
       loginKey: query.lk || '',
 
-      origin: window.location.origin,
+      // IE9 doesn't support this
+      origin: window.location.origin || '',
 
       // utmp  Page path
       path: window.location.pathname,
