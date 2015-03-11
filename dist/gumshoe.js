@@ -1235,6 +1235,7 @@ if (!Array.prototype.reduce) {
       baseData = {
         eventName: eventName,
         eventData: eventData || {},
+        gumshoe: '0.4.3',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1326,7 +1327,7 @@ if (!Array.prototype.reduce) {
   }
 
   exports = extend(gumshoe, {
-    version: '0.4.2',
+    version: '0.4.3',
     extend: extend,
     send: send,
     transport: transport,

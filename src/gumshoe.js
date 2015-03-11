@@ -266,6 +266,7 @@
       baseData = {
         eventName: eventName,
         eventData: eventData || {},
+        gumshoe: '{package_version}',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
