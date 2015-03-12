@@ -1014,33 +1014,22 @@ if (!Array.prototype.reduce) {
     return uuid;
   }
 
-  var exports,
-    defaults = {
+  var defaults = {
       transport: '',
       queueTimeout: 100
     },
     storage = store.namespace('gumshoe').session,
     queue = storage('queue') || [],
-    config,
-    transports = {},
-    query = queryString.parse(location.search),
-    viewport = (function viewport() {
-      var e = window, a = 'inner';
-      if (!('innerWidth' in window )) {
-        a = 'client';
-        e = document.documentElement || document.body;
-      }
-      return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
-    })();
+    transports = {};
 
   function gumshoe (options) {
-    config = extend({}, defaults, options);
+    options = extend({}, defaults, options);
 
     // always ensure options.transport is an array.
-    if (isString(config.transport)) {
-      config.transport = [config.transport];
+    if (isString(options.transport)) {
+      options.transport = [options.transport];
     }
-    else if (!isArray(config.transport)) {
+    else if (!isArray(options.transport)) {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].';
     }
 
@@ -1050,7 +1039,7 @@ if (!Array.prototype.reduce) {
     }
 
     // expose this for testing purposes
-    exports.__internal__.config = config;
+    gumshoe.options = options;
   }
 
   function each (obj, iterator, context) {
@@ -1124,86 +1113,101 @@ if (!Array.prototype.reduce) {
   }
 
   function collect () {
-    var result = {
-      // utmcs Character set (e.g. ISO-8859-1)
-      characterSet: document.characterSet || document.charset || document.inputEncoding || 'Unknown',
 
-      // utmsc Screen colour depth (e.g. 24-bit)
-      colorDepth: screen.colorDepth + '',
+    function getViewport() {
+      var e = window, a = 'inner';
+      if (!('innerWidth' in window )) {
+        a = 'client';
+        e = document.documentElement || document.body;
+      }
+      return { width : e[ a+'Width' ] , height : e[ a+'Height' ] };
+    }
 
-      cookie: document.cookie,
+    var
+      viewport = getViewport(),
 
-      // gclid Gclid is a globally unique tracking parameter (Google Click Identifier)
-      googleClickId: query.gclid || '',
+      query = queryString.parse(location.search),
 
-      hash: window.location.hash,
-      host: window.location.host,
+      result = {
+        // utmcs Character set (e.g. ISO-8859-1)
+        characterSet: document.characterSet || document.charset || document.inputEncoding || 'Unknown',
 
-      // utmhn Hostname
-      hostName: window.location.hostname,
+        // utmsc Screen colour depth (e.g. 24-bit)
+        colorDepth: screen.colorDepth + '',
 
-      // utmip IP address
-      ipAddress: '',
+        cookie: document.cookie,
 
-      // utmje Java enabled?
-      javaEnabled: navigator.javaEnabled(),
+        // gclid Gclid is a globally unique tracking parameter (Google Click Identifier)
+        googleClickId: query.gclid || '',
 
-      // utmul Language code (e.g. en-us)
-      language: document.documentElement ? document.documentElement.lang : window.navigator.language || 'Unknown',
+        hash: window.location.hash,
+        host: window.location.host,
 
-      // login key: ?lk=
-      loginKey: query.lk || '',
+        // utmhn Hostname
+        hostName: window.location.hostname,
 
-      // IE9 doesn't support this
-      origin: window.location.origin || '',
+        // utmip IP address
+        ipAddress: '',
 
-      // utmp  Page path
-      path: window.location.pathname,
-      platform: window.navigator.platform,
-      plugins: collectPlugins(),
-      port: window.location.port || 80,
-      // promotional key: pkey
-      promotionKey: query.pkey || '',
-      protocol: window.location.protocol,
+        // utmje Java enabled?
+        javaEnabled: navigator.javaEnabled(),
 
-      queryString: window.location.search,
+        // utmul Language code (e.g. en-us)
+        language: document.documentElement ? document.documentElement.lang : window.navigator.language || 'Unknown',
 
-      // utmr  Full referral URL
-      referer: document.referrer,
+        // login key: ?lk=
+        loginKey: query.lk || '',
 
-      screenAvailHeight: screen.availHeight,
-      screenAvailWidth: screen.availWidth,
-      screenHeight: screen.height,
-      screenOrientationAngle: '',
-      screenOrientationType: '',
-      screenPixelDepth: screen.pixelDepth + '',
-      // utmsr Screen resolution
-      screenResolution: screen.width + 'x' + screen.height,
-      screenWidth: screen.width,
+        // IE9 doesn't support this
+        origin: window.location.origin || '',
 
-      // utmdt Page title
-      title: document.title,
+        // utmp  Page path
+        path: window.location.pathname,
+        platform: window.navigator.platform,
+        plugins: collectPlugins(),
+        port: window.location.port || 80,
+        // promotional key: pkey
+        promotionKey: query.pkey || '',
+        protocol: window.location.protocol,
 
-      url: window.location.href,
-      userAgent: window.navigator.userAgent,
-      utmCampaign: query.utm_campaign || '',
-      utmContent: query.utm_content || '',
-      utmMedium: query.utm_medium || '',
-      utmSource: query.utm_source || '',
-      utmTerm: query.utm_term || '',
+        queryString: window.location.search,
 
-      // utmvp Viewport resolution
-      viewportHeight: viewport.height,
-      viewportResolution: viewport.width + 'x' + viewport.height,
-      viewportWidth: viewport.width
-    },
+        // utmr  Full referral URL
+        referer: document.referrer,
 
-    intFields = [
-      'port', 'screenAvailHeight', 'screenAvailWidth', 'screenHeight',
-      'screenOrientationAngle', 'screenWidth', 'viewportHeight', 'viewportWidth'
-    ],
-    prop,
-    value;
+        screenAvailHeight: screen.availHeight,
+        screenAvailWidth: screen.availWidth,
+        screenHeight: screen.height,
+        screenOrientationAngle: '',
+        screenOrientationType: '',
+        screenPixelDepth: screen.pixelDepth + '',
+        // utmsr Screen resolution
+        screenResolution: screen.width + 'x' + screen.height,
+        screenWidth: screen.width,
+
+        // utmdt Page title
+        title: document.title,
+
+        url: window.location.href,
+        userAgent: window.navigator.userAgent,
+        utmCampaign: query.utm_campaign || '',
+        utmContent: query.utm_content || '',
+        utmMedium: query.utm_medium || '',
+        utmSource: query.utm_source || '',
+        utmTerm: query.utm_term || '',
+
+        // utmvp Viewport resolution
+        viewportHeight: viewport.height,
+        viewportResolution: viewport.width + 'x' + viewport.height,
+        viewportWidth: viewport.width
+      },
+
+      intFields = [
+        'port', 'screenAvailHeight', 'screenAvailWidth', 'screenHeight',
+        'screenOrientationAngle', 'screenWidth', 'viewportHeight', 'viewportWidth'
+      ],
+      prop,
+      value;
 
     // IE 8, 9 don't support this. Yay.
     if (screen.orientation) {
@@ -1235,7 +1239,7 @@ if (!Array.prototype.reduce) {
       baseData = {
         eventName: eventName,
         eventData: eventData || {},
-        gumshoe: '0.4.3',
+        gumshoe: '0.4.4',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1244,8 +1248,8 @@ if (!Array.prototype.reduce) {
       },
       transportFound = false;
 
-    for(var i = 0; i < config.transport.length; i++) {
-      var name = config.transport[i],
+    for(var i = 0; i < gumshoe.options.transport.length; i++) {
+      var name = gumshoe.options.transport[i],
         transport,
         data;
 
@@ -1300,7 +1304,7 @@ if (!Array.prototype.reduce) {
     // in the event the request doesn't complete before the page changes
     storage('queue', queue);
 
-    setTimeout(nextEvent, config.queueTimeout);
+    setTimeout(nextEvent, gumshoe.options.queueTimeout);
   }
 
   function pushEvent (eventName, transportName, data) {
@@ -1315,7 +1319,7 @@ if (!Array.prototype.reduce) {
     // put our newly modified queue in session storage
     storage('queue', queue);
 
-    setTimeout(nextEvent, config.queueTimeout);
+    setTimeout(nextEvent, gumshoe.options.queueTimeout);
   }
 
   function transport (tp) {
@@ -1326,26 +1330,30 @@ if (!Array.prototype.reduce) {
     transports[tp.name] = tp;
   }
 
-  exports = extend(gumshoe, {
-    version: '0.4.3',
-    extend: extend,
-    send: send,
-    transport: transport,
-    uuid: uuidv4,
-    __internal__: {
-      collect: collect,
-      config: config,
-      queue: queue,
-      storage: storage,
-      transports: transports
-    }
-  });
+  // setup some static properties
+  gumshoe.version = '0.4.4';
+  gumshoe.options = {};
+
+  // setup some static methods
+  gumshoe.extend = extend;
+  gumshoe.send = send,
+  gumshoe.transport = transport;
+  gumshoe.uuid = uuidv4;
+
+  // setup some internal stuff for access
+  gumshoe._ = {
+    collect: collect,
+    queue: queue,
+    storage: storage,
+    transports: transports
+  };
 
   if (root.gumshoe) {
 
-    root.gumshoe = extend(root.gumshoe, exports);
-
     if (root.gumshoe.ready) {
+      root.gumshoe.ready = gumshoe.ready = root.gumshoe.ready;
+      root.gumshoe = gumshoe;
+
       if (!isFunction(root.gumshoe.ready.resolve)) {
         throw 'Gumshoe: gumshoe.ready was predefined, but is not a Promise/A deferred.';
       }
@@ -1354,7 +1362,8 @@ if (!Array.prototype.reduce) {
     }
   }
   else {
-    root.gumshoe = exports;
+    root.gumshoe = gumshoe;
   }
+
 
 })(this);

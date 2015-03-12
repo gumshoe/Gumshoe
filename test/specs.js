@@ -11,31 +11,31 @@ describe('Gumshoe', function() {
 
   it('should expose properties', function () {
     expect(gumshoe.version).to.exist();
+    expect(gumshoe.options).to.exist();
 
     gumshoe({ transport: 'spec-transport', queueTimeout: 1000 });
   });
 
   it('should expose internal properties', function () {
-    expect(gumshoe.__internal__).to.exist();
-    expect(gumshoe.__internal__.config).to.exist();
-    expect(gumshoe.__internal__.storage).to.exist();
-    expect(gumshoe.__internal__.transports).to.exist();
+    expect(gumshoe._).to.exist();
+    expect(gumshoe._.storage).to.exist();
+    expect(gumshoe._.transports).to.exist();
   });
 
   it('should set configuration', function () {
-    expect(gumshoe.__internal__.config.queueTimeout).to.equal(1000);
-    expect(gumshoe.__internal__.config.transport).to.include('spec-transport');
+    expect(gumshoe.options.queueTimeout).to.equal(1000);
+    expect(gumshoe.options.transport).to.include('spec-transport');
   });
 
   it('should expose methods', function () {
     expect(gumshoe.send).to.exist();
     expect(gumshoe.transport).to.exist();
     expect(gumshoe.uuid).to.exist();
-    expect(gumshoe.__internal__.collect).to.exist();
+    expect(gumshoe._.collect).to.exist();
   });
 
   it('should collect data', function () {
-    data = gumshoe.__internal__.collect();
+    data = gumshoe._.collect();
 
     expect(data).to.exist();
   });
@@ -126,23 +126,23 @@ describe('Gumshoe', function() {
   });
 
   it('should fetch data from the transport.map method', function () {
-    data = gumshoe.__internal__.transports['spec-transport'].map(data);
+    data = gumshoe._.transports['spec-transport'].map(data);
 
     expect(data.newProp).to.equal(1);
     expect(data.ipAddress).to.equal('192.168.1.1');
   });
 
   it('should have a uuid in session storage', function () {
-    expect(gumshoe.__internal__.storage('uuid')).to.exist();
-    expect(gumshoe.__internal__.storage('uuid')).to.have.length.above(0);
+    expect(gumshoe._.storage('uuid')).to.exist();
+    expect(gumshoe._.storage('uuid')).to.have.length.above(0);
   });
 
   it('should queue events', function (done) {
     gumshoe.send('page.view', { foo: 'bar'});
 
-    expect(gumshoe.__internal__.queue).to.have.length(1);
+    expect(gumshoe._.queue).to.have.length(1);
 
-    var nevent = gumshoe.__internal__.queue[0];
+    var nevent = gumshoe._.queue[0];
 
     expect(nevent).to.exist();
     expect(nevent.eventName).to.equal('page.view');
@@ -161,7 +161,7 @@ describe('Gumshoe', function() {
 
     setTimeout(function () {
       // queue should be empty after our test event has been 'sent'
-      expect(gumshoe.__internal__.queue).to.have.length(0);
+      expect(gumshoe._.queue).to.have.length(0);
       done();
     }, 1100);
   });
