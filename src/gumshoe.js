@@ -306,6 +306,11 @@
           data.pageData.plugins = JSON.stringify(data.pageData.plugins);
         }
 
+        // TODO: remove this. temporary bugfix for apps
+        if (!data.pageData.ipAddress) {
+          data.pageData.ipAddress = '<unknown>';
+        }
+
         pushEvent(eventName, name, data);
       }
       else {
