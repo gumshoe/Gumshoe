@@ -1,7 +1,11 @@
 /* global performance, queryString, store */
 (function (root) {
 
-  var store = root.store;
+  'use strict';
+
+  var store = root.store,
+    /*jshint -W024 */
+    undefined;
 
   function extend (obj) {
     if (!isObject(obj)) {
@@ -181,7 +185,7 @@
         ipAddress: '',
 
         // utmje Java enabled?
-        javaEnabled: navigator.javaEnabled(),
+        javaEnabled: navigator.javaEnabled ? navigator.javaEnabled() : false,
 
         // utmul Language code (e.g. en-us)
         language: document.documentElement ? document.documentElement.lang : window.navigator.language || 'Unknown',
@@ -239,6 +243,11 @@
       ],
       prop,
       value;
+
+    // some browsers don't support navigator.javaEnabled(), it's always undefined.
+    if (result.javaEnabled === undefined) {
+      result.javaEnabled = false;
+    }
 
     // IE 8, 9 don't support this. Yay.
     if (screen.orientation) {

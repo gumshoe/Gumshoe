@@ -970,7 +970,11 @@ if (!Array.prototype.reduce) {
 /* global performance, queryString, store */
 (function (root) {
 
-  var store = root.store;
+  'use strict';
+
+  var store = root.store,
+    /*jshint -W024 */
+    undefined;
 
   function extend (obj) {
     if (!isObject(obj)) {
@@ -1150,7 +1154,7 @@ if (!Array.prototype.reduce) {
         ipAddress: '',
 
         // utmje Java enabled?
-        javaEnabled: navigator.javaEnabled(),
+        javaEnabled: navigator.javaEnabled ? navigator.javaEnabled() : false,
 
         // utmul Language code (e.g. en-us)
         language: document.documentElement ? document.documentElement.lang : window.navigator.language || 'Unknown',
@@ -1209,6 +1213,11 @@ if (!Array.prototype.reduce) {
       prop,
       value;
 
+    // some browsers don't support navigator.javaEnabled(), it's always undefined.
+    if (result.javaEnabled === undefined) {
+      result.javaEnabled = false;
+    }
+
     // IE 8, 9 don't support this. Yay.
     if (screen.orientation) {
       result.screenOrientationAngle = parseInt(screen.orientation.angle ? screen.orientation.angle : '0');
@@ -1239,7 +1248,7 @@ if (!Array.prototype.reduce) {
       baseData = {
         eventName: eventName,
         eventData: eventData || {},
-        gumshoe: '0.4.4',
+        gumshoe: '0.4.6',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1273,6 +1282,11 @@ if (!Array.prototype.reduce) {
         // TODO: remove this. gumshoe shouldn't care what format this is in
         if (!isString(data.pageData.plugins)) {
           data.pageData.plugins = JSON.stringify(data.pageData.plugins);
+        }
+
+        // TODO: remove this. temporary bugfix for apps
+        if (!data.pageData.ipAddress) {
+          data.pageData.ipAddress = '<unknown>';
         }
 
         pushEvent(eventName, name, data);
@@ -1331,7 +1345,7 @@ if (!Array.prototype.reduce) {
   }
 
   // setup some static properties
-  gumshoe.version = '0.4.4';
+  gumshoe.version = '0.4.6';
   gumshoe.options = {};
 
   // setup some static methods
