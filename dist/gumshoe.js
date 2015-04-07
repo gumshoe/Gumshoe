@@ -129,6 +129,8 @@ if (!Array.prototype.reduce) {
 	}
 })();
 
+/*! ATTENTION: LINE 374 HAS BEEN MODIFIED, USING THE FIX FOR https://github.com/ded/reqwest/issues/73 */
+
 /*!
   * Reqwest! A general purpose XHR connection manager
   * license MIT (c) Dustin Diaz 2014
@@ -499,7 +501,10 @@ if (!Array.prototype.reduce) {
   Reqwest.prototype = {
     abort: function () {
       this._aborted = true
-      this.request.abort()
+
+      if( typeof this.request !== 'undefined' && typeof this.request.abort === 'function' ) {
+        this.request.abort();
+      }
     }
 
   , retry: function () {
@@ -1248,7 +1253,7 @@ if (!Array.prototype.reduce) {
       baseData = {
         eventName: eventName,
         eventData: eventData || {},
-        gumshoe: '0.4.6',
+        gumshoe: '0.4.7',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1345,7 +1350,7 @@ if (!Array.prototype.reduce) {
   }
 
   // setup some static properties
-  gumshoe.version = '0.4.6';
+  gumshoe.version = '0.4.7';
   gumshoe.options = {};
 
   // setup some static methods
