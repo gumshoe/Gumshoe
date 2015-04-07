@@ -129,7 +129,7 @@ if (!Array.prototype.reduce) {
 	}
 })();
 
-/*! ATTENTION: LINE 374 HAS BEEN MODIFIED, USING THE FIX FOR https://github.com/ded/reqwest/issues/73 */
+/*! ATTENTION: LINES 353 & 377 HAVE BEEN MODIFIED, USING THE FIX FOR https://github.com/ded/reqwest/issues/73 */
 
 /*!
   * Reqwest! A general purpose XHR connection manager
@@ -480,7 +480,10 @@ if (!Array.prototype.reduce) {
 
     function timedOut() {
       self._timedOut = true
-      self.request.abort()      
+
+      if( typeof self.request !== 'undefined' && typeof self.request.abort === 'function' ) {
+        self.request.abort();
+      }
     }
 
     function error(resp, msg, t) {
@@ -1253,7 +1256,7 @@ if (!Array.prototype.reduce) {
       baseData = {
         eventName: eventName,
         eventData: eventData || {},
-        gumshoe: '0.4.7',
+        gumshoe: '0.4.8',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1350,7 +1353,7 @@ if (!Array.prototype.reduce) {
   }
 
   // setup some static properties
-  gumshoe.version = '0.4.7';
+  gumshoe.version = '0.4.8';
   gumshoe.options = {};
 
   // setup some static methods
