@@ -3,9 +3,26 @@
 
   'use strict';
 
-  var store = root.store,
+  // we need reqwest and store2 (and any other future deps)
+  // to be solely within our context, so as they don't leak and conflict
+  // with other versions of the same libs sites may be loading.
+  // so we'll provide our own context.
+  // root._gumshoe is only available in specs
+  var context = root._gumshoe || {},
+    store,
     /*jshint -W024 */
     undefined;
+
+  // call contextSetup with 'context' as 'this' so all libs attach
+  // to our context variable.
+  (function contextSetup () {
+    // reqwest.js
+
+    // store2.js
+
+  }).call(context);
+
+  store = context.store;
 
   function extend (obj) {
     if (!isObject(obj)) {
@@ -381,6 +398,7 @@
 
   // setup some static methods
   gumshoe.extend = extend;
+  gumshoe.reqwest = context.reqwest;
   gumshoe.send = send,
   gumshoe.transport = transport;
   gumshoe.uuid = uuidv4;

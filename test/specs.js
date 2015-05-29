@@ -87,7 +87,7 @@ describe('Gumshoe', function() {
     expect(data.title).to.equal('Test: Gumshoe');
 
     expect(data.url).to.have.length.above(0);
-    expect(data.url).to.have.string('test/runner.html');
+    expect(true).to.equal(data.url.indexOf('test/runner.html') > 0 || data.url.indexOf('test/runner-dist.html') > 0);
 
     expect(data.userAgent).to.have.length.above(0);
 

@@ -9,6 +9,7 @@ var gulp = require('gulp'),
   rename = require('gulp-rename'),
   replace = require('gulp-replace'),
   uglify = require('gulp-uglify'),
+  gfi = require('gulp-file-insert'),
 
   pkg = require('./package.json');
 
@@ -21,7 +22,12 @@ gulp.task('lint', function () {
 });
 
 gulp.task('test', ['build'], function () {
-  return gulp.src(['test/**/*.html'])
+  return gulp.src(['test/**/*.html', '!test/**/*-dist.html'])
+      .pipe(mochaPhantomJS({}));
+});
+
+gulp.task('test-dist', ['build'], function () {
+  return gulp.src(['test/**/*-dist.html'])
       .pipe(mochaPhantomJS({}));
 });
 
@@ -31,6 +37,12 @@ gulp.task('build', ['lint'], function () {
 
   return gulp.src('src/gumshoe.js')
 
+    // replace our scoped deps
+    .pipe(gfi({
+      '// reqwest.js': 'lib/reqwest.js',
+      '// store2.js': 'lib/store2.js'
+    }))
+
     // insert the version
     .pipe(replace('{package_version}', pkg.version))
 
@@ -38,7 +50,11 @@ gulp.task('build', ['lint'], function () {
     .pipe(addsrc('src/transports/**/*.js'))
 
     // prepend our required libs
-    .pipe(addsrc.prepend('lib/**/*.js'))
+    .pipe(addsrc.prepend([
+      'lib/**/*.js',
+      '!lib/**/reqwest.js',
+      '!lib/**/store2.js',
+    ]))
 
     // combine all of the files into one and output
     .pipe(concat('gumshoe.js'))

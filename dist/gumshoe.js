@@ -129,12 +129,30 @@ if (!Array.prototype.reduce) {
 	}
 })();
 
-/*! ATTENTION: LINES 353 & 377 HAVE BEEN MODIFIED, USING THE FIX FOR https://github.com/ded/reqwest/issues/73 */
+/* global performance, queryString, store */
+(function (root) {
+
+  'use strict';
+
+  // we need reqwest and store2 (and any other future deps)
+  // to be solely within our context, so as they don't leak and conflict
+  // with other versions of the same libs sites may be loading.
+  // so we'll provide our own context.
+  // root._gumshoe is only available in specs
+  var context = root._gumshoe || {},
+    store,
+    /*jshint -W024 */
+    undefined;
+
+  // call contextSetup with 'context' as 'this' so all libs attach
+  // to our context variable.
+  (function contextSetup () {
+    /*! ATTENTION: LINES 350 & 375 HAVE BEEN MODIFIED, USING THE FIX FOR https://github.com/ded/reqwest/issues/73 */
 
 /*!
   * Reqwest! A general purpose XHR connection manager
   * license MIT (c) Dustin Diaz 2014
-  * https://github.com/ded/reqwest
+  * https://github.com/gilt/reqwest
   */
 
 !function (name, context, definition) {
@@ -480,8 +498,7 @@ if (!Array.prototype.reduce) {
 
     function timedOut() {
       self._timedOut = true
-
-      if( typeof self.request !== 'undefined' && typeof self.request.abort === 'function' ) {
+      if(typeof self.request !== 'undefined' && typeof self.request.abort === 'function') {
         self.request.abort();
       }
     }
@@ -504,13 +521,14 @@ if (!Array.prototype.reduce) {
   Reqwest.prototype = {
     abort: function () {
       this._aborted = true
-
-      if( typeof this.request !== 'undefined' && typeof this.request.abort === 'function' ) {
-        this.request.abort();
+      if(typeof self.request !== 'undefined' && typeof self.request.abort === 'function') {
+        self.request.abort();
       }
     }
 
   , retry: function () {
+      this._aborted=false;
+      this._timedOut=false;
       init.call(this, this.o, this.fn)
     }
 
@@ -753,11 +771,12 @@ if (!Array.prototype.reduce) {
   return reqwest
 });
 
-/*! store2 - v2.1.6 - 2014-03-10
-* Copyright (c) 2014 Nathan Bubna; Licensed MIT, GPL */
+
+    /*! store2 - v2.3.0 - 2015-05-22
+* Copyright (c) 2015 Nathan Bubna; Licensed MIT, GPL */
 ;(function(window, define) {
     var _ = {
-        version: "2.1.6",
+        version: "2.3.0",
         areas: {},
         apis: {},
 
@@ -802,7 +821,15 @@ if (!Array.prototype.reduce) {
                 return store.setAll(key, data);// overwrite=data, data=key
             });
             store._id = id;
-            store._area = area || _.inherit(_.storageAPI, { items: {}, name: 'fake' });
+            try {
+                var testKey = '_safariPrivate_';
+                area.setItem(testKey, 'sucks');
+                store._area = area;
+                area.removeItem(testKey);
+            } catch (e) {}
+            if (!store._area) {
+                store._area = _.inherit(_.storageAPI, { items: {}, name: 'fake' });
+            }
             store._ns = namespace || '';
             if (!_.areas[id]) {
                 _.areas[id] = store._area;
@@ -963,26 +990,23 @@ if (!Array.prototype.reduce) {
     // safely setup store.session (throws exception in FF for file:/// urls)
     store.area("session", (function(){try{ return sessionStorage; }catch(e){}})());
 
+    //Expose store to the global object
+    window.store = store;
+
     if (typeof define === 'function' && define.amd !== undefined) {
         define(function () {
             return store;
         });
     } else if (typeof module !== 'undefined' && module.exports) {
         module.exports = store;
-    } else {
-        window.store = store;
     }
 
-})(window, window.define);
+})(this, this.define);
 
-/* global performance, queryString, store */
-(function (root) {
 
-  'use strict';
+  }).call(context);
 
-  var store = root.store,
-    /*jshint -W024 */
-    undefined;
+  store = context.store;
 
   function extend (obj) {
     if (!isObject(obj)) {
@@ -1256,7 +1280,7 @@ if (!Array.prototype.reduce) {
       baseData = {
         eventName: eventName,
         eventData: eventData || {},
-        gumshoe: '0.4.8',
+        gumshoe: '0.4.9',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1353,11 +1377,12 @@ if (!Array.prototype.reduce) {
   }
 
   // setup some static properties
-  gumshoe.version = '0.4.8';
+  gumshoe.version = '0.4.9';
   gumshoe.options = {};
 
   // setup some static methods
   gumshoe.extend = extend;
+  gumshoe.reqwest = context.reqwest;
   gumshoe.send = send,
   gumshoe.transport = transport;
   gumshoe.uuid = uuidv4;
