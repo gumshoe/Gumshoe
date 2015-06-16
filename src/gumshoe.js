@@ -399,7 +399,7 @@
   // setup some static methods
   gumshoe.extend = extend;
   gumshoe.reqwest = context.reqwest;
-  gumshoe.send = send,
+  gumshoe.send = send;
   gumshoe.transport = transport;
   gumshoe.uuid = uuidv4;
 

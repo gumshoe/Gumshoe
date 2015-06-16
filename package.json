@@ -1,6 +1,6 @@
 {
   "name": "Gumshoe",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "description": "An analytics and event tracking sleuth.",
   "keywords": [
     "tracking",
@@ -18,7 +18,7 @@
       "email": "andrew@shellscape.org"
     }
   ],
-  "main": "./dist/gumshoe-0.1.0.js",
+  "main": "./dist/gumshoe.js",
   "bugs": {
     "url": "http://github.com/gilt/gumshoe/issues"
   },

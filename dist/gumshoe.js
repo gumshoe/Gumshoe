@@ -147,12 +147,10 @@ if (!Array.prototype.reduce) {
   // call contextSetup with 'context' as 'this' so all libs attach
   // to our context variable.
   (function contextSetup () {
-    /*! ATTENTION: LINES 350 & 375 HAVE BEEN MODIFIED, USING THE FIX FOR https://github.com/ded/reqwest/issues/73 */
-
-/*!
+    /*!
   * Reqwest! A general purpose XHR connection manager
   * license MIT (c) Dustin Diaz 2014
-  * https://github.com/gilt/reqwest
+  * https://github.com/ded/reqwest
   */
 
 !function (name, context, definition) {
@@ -223,7 +221,7 @@ if (!Array.prototype.reduce) {
   function succeed(r) {
     var protocol = protocolRe.exec(r.url);
     protocol = (protocol && protocol[1]) || window.location.protocol;
-    return httpsRe.test(protocol) ? twoHundo.test(r.request.status) : !!r.request.response;
+    return httpsRe.test(protocol) ? twoHundo.test(r.request.status) : !!r.request.responseText;
   }
 
   function handleReadyState(r, success, error) {
@@ -521,8 +519,8 @@ if (!Array.prototype.reduce) {
   Reqwest.prototype = {
     abort: function () {
       this._aborted = true
-      if(typeof self.request !== 'undefined' && typeof self.request.abort === 'function') {
-        self.request.abort();
+      if(typeof this.request !== 'undefined' && typeof this.request.abort === 'function') {
+        this.request.abort();
       }
     }
 
@@ -1280,7 +1278,7 @@ if (!Array.prototype.reduce) {
       baseData = {
         eventName: eventName,
         eventData: eventData || {},
-        gumshoe: '0.4.9',
+        gumshoe: '0.5.0',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1377,13 +1375,13 @@ if (!Array.prototype.reduce) {
   }
 
   // setup some static properties
-  gumshoe.version = '0.4.9';
+  gumshoe.version = '0.5.0';
   gumshoe.options = {};
 
   // setup some static methods
   gumshoe.extend = extend;
   gumshoe.reqwest = context.reqwest;
-  gumshoe.send = send,
+  gumshoe.send = send;
   gumshoe.transport = transport;
   gumshoe.uuid = uuidv4;
 
