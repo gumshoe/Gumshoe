@@ -45,6 +45,8 @@ Gumshoe is comprised of several simple sturctural elements:
 
 **Transport**
 
+Transports describes the way in which data is sent from Gumshoe to an endpoint where it is ultimately stored and/or analyized. Each implementation of Gumshoe is responsible for initializing its own transport. Once data for an event has been collected and the event has been queued, Gumshoe will attempt to send the data using the defined transport. Gumshoe also supports multiple transports for sending data to multiple endpoints.
+
 **Event Name**
 
 An event name should be carefully considered, and all event names should be of the same format, tense, and general structure. At Gilt we use a dot-delimited event naming notation. eg. `'checkout.country.selected'`. 
