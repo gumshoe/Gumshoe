@@ -1067,12 +1067,8 @@ if (!Array.prototype.reduce) {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].';
     }
 
-    // set a session based uuid
-    if (!storage('uuid')) {
-      storage('uuid', uuidv4());
-    }
+    session(options.sessionFn);
 
-    // expose this for testing purposes
     gumshoe.options = options;
   }
 
@@ -1273,6 +1269,34 @@ if (!Array.prototype.reduce) {
     return result;
   }
 
+  function session (fn) {
+    var now = (new Date()).getTime(),
+      query = queryString.parse(location.search),
+      utm_campaign = storage('utm_campaign') || '',
+      timestamp,
+      difference;
+
+    // set a session based uuid
+    if (!storage('uuid')) {
+      storage('uuid', uuidv4());
+      storage('timestamp', now);
+    }
+    else {
+      timestamp = storage('timestamp');
+      difference = now - timestamp;
+
+      if (fn) {
+        /* jshint validthis: true */
+        if (fn.call(this, timestamp, difference, query)) {
+          storage('uuid', uuidv4());
+        }
+      }
+      else if (utm_campaign !== query.utm_campaign || difference > (1000 * 60 * 30)) {
+        storage('uuid', uuidv4());
+      }
+    }
+  }
+
   function send (eventName, eventData) {
     var pageData = collect(),
       baseData = {
@@ -1286,6 +1310,10 @@ if (!Array.prototype.reduce) {
         uuid: uuidv4()
       },
       transportFound = false;
+
+    // since we're dealing with timeouts now, we need to reassert the
+    // session ID for each event sent.
+    session();
 
     for(var i = 0; i < gumshoe.options.transport.length; i++) {
       var name = gumshoe.options.transport[i],

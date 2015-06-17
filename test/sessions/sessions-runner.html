@@ -1,0 +1,47 @@
+<!doctype html>
+<html>
+<head>
+  <title>Test: Gumshoe</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="../../node_modules/gulp-mocha/node_modules/mocha/mocha.css" rel="stylesheet">
+</head>
+<body>
+  <div id="mocha"></div>
+  <script src="../../node_modules/gulp-mocha/node_modules/mocha/mocha.js"></script>
+  <script src="../../node_modules/chai/chai.js"></script>
+  <script>mocha.setup('bdd')</script>
+
+  <script src="../../lib/_polyfills.js"></script>
+  <script src="../../lib/perfnow.js"></script>
+  <script src="../../lib/query-string.js"></script>
+  <script src="../../lib/reqwest.js"></script>
+  <script src="../../lib/store2.js"></script>
+
+  <script>
+    // we do this so that the private scope context in gumshoe
+    // can access these properties while running specs with src files
+    window._gumshoe = {
+      reqwest: window.reqwest,
+      store: window.store
+    };
+  </script>
+
+  <script src="../../src/gumshoe.js"></script>
+
+  <script src="../fixtures.js"></script>
+  <script src="sessions-specs.js"></script>
+
+  <script>
+    var expect = chai.expect,
+      assert = chai.assert;
+
+    if (window.mochaPhantomJS) {
+      mochaPhantomJS.run()
+    }
+    else {
+      mocha.run()
+    }
+ </script>
+</body>
+</html>
