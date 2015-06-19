@@ -62,14 +62,33 @@ if (!Array.prototype.reduce) {
         return new Date().getTime();
       };
   })(window);
-/*!
+/* global performance */
+(function (root) {
+
+  'use strict';
+
+  // we need reqwest and store2 (and any other future deps)
+  // to be solely within our context, so as they don't leak and conflict
+  // with other versions of the same libs sites may be loading.
+  // so we'll provide our own context.
+  // root._gumshoe is only available in specs
+  var context = root._gumshoe || {},
+    queryString,
+    store,
+    /*jshint -W024 */
+    undefined;
+
+  // call contextSetup with 'context' as 'this' so all libs attach
+  // to our context variable.
+  (function contextSetup () {
+    /*!
 	query-string
 	Parse and stringify URL query strings
 	https://github.com/sindresorhus/query-string
 	by Sindre Sorhus
 	MIT License
 */
-(function () {
+(function (window) {
 	'use strict';
 	var queryString = {};
 
@@ -127,26 +146,9 @@ if (!Array.prototype.reduce) {
 	} else {
 		window.queryString = queryString;
 	}
-})();
+})(this);
 
-/* global performance, queryString, store */
-(function (root) {
 
-  'use strict';
-
-  // we need reqwest and store2 (and any other future deps)
-  // to be solely within our context, so as they don't leak and conflict
-  // with other versions of the same libs sites may be loading.
-  // so we'll provide our own context.
-  // root._gumshoe is only available in specs
-  var context = root._gumshoe || {},
-    store,
-    /*jshint -W024 */
-    undefined;
-
-  // call contextSetup with 'context' as 'this' so all libs attach
-  // to our context variable.
-  (function contextSetup () {
     /*!
   * Reqwest! A general purpose XHR connection manager
   * license MIT (c) Dustin Diaz 2014
@@ -1004,6 +1006,7 @@ if (!Array.prototype.reduce) {
 
   }).call(context);
 
+  queryString = context.queryString;
   store = context.store;
 
   function extend (obj) {
@@ -1067,12 +1070,8 @@ if (!Array.prototype.reduce) {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].';
     }
 
-    // set a session based uuid
-    if (!storage('uuid')) {
-      storage('uuid', uuidv4());
-    }
+    session(options.sessionFn);
 
-    // expose this for testing purposes
     gumshoe.options = options;
   }
 
@@ -1273,6 +1272,63 @@ if (!Array.prototype.reduce) {
     return result;
   }
 
+  /**
+   * @private
+   * @method session
+   *
+   * @note
+   * Gumshoe Session Rules
+   *
+   *  Generate a new Session ID if any of the following criteria are met:
+   *
+   *  1. User opens new tab or window (browser default behavior)
+   *  2. User has been inactive longer than 30 minutes
+   *  3. User has visited withinin the same session, but a UTM
+   *     query string parameter has changed.
+   */
+  function session (fn) {
+
+    // returns a simple object containing utm parameters
+    function getUtm () {
+      return {
+        campaign: query.utm_campaign || '',
+        medium: query.utm_medium || '',
+        source: query.utm_source || '',
+        utmTerm: query.utm_term || ''
+      };
+    }
+
+    var now = (new Date()).getTime(),
+      query = queryString.parse(location.search),
+      lastUtm = storage('utm') || getUtm(),
+      utm = getUtm(),
+      timestamp,
+      difference;
+
+    // save the current state of the utm parameters
+    storage('utm', utm);
+
+    // set a session based uuid
+    if (!storage('uuid')) {
+      storage('uuid', uuidv4());
+      storage('timestamp', now);
+    }
+    else {
+      timestamp = storage('timestamp');
+      difference = now - timestamp;
+
+      if (fn) {
+        /* jshint validthis: true */
+        if (fn.call(this, timestamp, difference, query)) {
+          storage('uuid', uuidv4());
+        }
+      }
+      else if (JSON.stringify(lastUtm) !== JSON.stringify(utm) || difference > (1000 * 60 * 30)) {
+        storage('uuid', uuidv4());
+      }
+    }
+  }
+
   function send (eventName, eventData) {
     var pageData = collect(),
       baseData = {
@@ -1286,6 +1342,10 @@ if (!Array.prototype.reduce) {
         uuid: uuidv4()
       },
       transportFound = false;
+
+    // since we're dealing with timeouts now, we need to reassert the
+    // session ID for each event sent.
+    session(gumshoe.options.sessionFn);
 
     for(var i = 0; i < gumshoe.options.transport.length; i++) {
       var name = gumshoe.options.transport[i],
@@ -1388,6 +1448,7 @@ if (!Array.prototype.reduce) {
   // setup some internal stuff for access
   gumshoe._ = {
     collect: collect,
+    queryString: queryString,
     queue: queue,
     storage: storage,
     transports: transports

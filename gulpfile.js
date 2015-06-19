@@ -39,6 +39,7 @@ gulp.task('build', ['lint'], function () {
 
     // replace our scoped deps
     .pipe(gfi({
+      '// query-string.js': 'lib/query-string.js',
       '// reqwest.js': 'lib/reqwest.js',
       '// store2.js': 'lib/store2.js'
     }))
@@ -52,6 +53,7 @@ gulp.task('build', ['lint'], function () {
     // prepend our required libs
     .pipe(addsrc.prepend([
       'lib/**/*.js',
+      '!lib/**/query-string.js',
       '!lib/**/reqwest.js',
       '!lib/**/store2.js',
     ]))
