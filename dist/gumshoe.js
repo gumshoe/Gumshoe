@@ -1334,7 +1334,7 @@ if (!Array.prototype.reduce) {
       baseData = {
         eventName: eventName,
         eventData: eventData || {},
-        gumshoe: '0.5.0',
+        gumshoe: '0.6.0',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1435,7 +1435,7 @@ if (!Array.prototype.reduce) {
   }
 
   // setup some static properties
-  gumshoe.version = '0.5.0';
+  gumshoe.version = '0.6.0';
   gumshoe.options = {};
 
   // setup some static methods
