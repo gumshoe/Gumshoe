@@ -1059,6 +1059,10 @@ if (!Array.prototype.reduce) {
     queue = storage('queue') || [],
     transports = {};
 
+  if (!isArray(queue)) {
+    queue = [];
+  }
+
   function gumshoe (options) {
     options = extend({}, defaults, options);
 
@@ -1334,7 +1338,7 @@ if (!Array.prototype.reduce) {
       baseData = {
         eventName: eventName,
         eventData: eventData || {},
-        gumshoe: '0.6.0',
+        gumshoe: '0.6.1',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1348,13 +1352,13 @@ if (!Array.prototype.reduce) {
     session(gumshoe.options.sessionFn);
 
     for(var i = 0; i < gumshoe.options.transport.length; i++) {
-      var name = gumshoe.options.transport[i],
+      var transportName = gumshoe.options.transport[i],
         transport,
         data;
 
-      if (name && transports[name]) {
+      if (transportName && transports[transportName]) {
         transportFound = true;
-        transport = transports[name];
+        transport = transports[transportName];
 
         // allow each transport to extend the data with more information
         // or transform it how they'd like. transports cannot however,
@@ -1379,10 +1383,10 @@ if (!Array.prototype.reduce) {
           data.pageData.ipAddress = '<unknown>';
         }
 
-        pushEvent(eventName, name, data);
+        pushEvent(eventName, transportName, data);
       }
       else {
-        throw 'Gumshoe: The transport name: ' + name + ', doesn\'t map to a valid transport.';
+        throw 'Gumshoe: The transport name: ' + transportName + ', doesn\'t map to a valid transport.';
       }
     }
 
@@ -1413,6 +1417,18 @@ if (!Array.prototype.reduce) {
 
   function pushEvent (eventName, transportName, data) {
 
+    var transport;
+
+    // if we're dealing with a fake storage object
+    // (eg. sessionStorage isn't available) then don't
+    // even bother queueing the data.
+    if (storage.isFake()) {
+      transport = transports[transportName];
+      transport.send(data);
+
+      return;
+    }
+
     // add the event data to the queue
     queue.push({
       eventName: eventName,
@@ -1435,7 +1451,7 @@ if (!Array.prototype.reduce) {
   }
 
   // setup some static properties
-  gumshoe.version = '0.6.0';
+  gumshoe.version = '0.6.1';
   gumshoe.options = {};
 
   // setup some static methods
@@ -1470,6 +1486,5 @@ if (!Array.prototype.reduce) {
   else {
     root.gumshoe = gumshoe;
   }
-
 
 })(this);
