@@ -19,7 +19,7 @@ describe('Gumshoe Sessions', function() {
   }
 
   it('should live in the global namespace', function () {
-    expect(window.gumshoe).to.exist();
+    expect(window.gumshoe).to.exist;
 
     gumshoe({
       transport: 'spec-transport',
@@ -78,8 +78,8 @@ describe('Gumshoe Sessions', function() {
     }
 
     // sanity check our values before hand
-    expect(gumshoe._.storage('utm')).to.exist();
-    expect(gumshoe._.storage('utm').medium).to.exist();
+    expect(gumshoe._.storage('utm')).to.exist;
+    expect(gumshoe._.storage('utm').medium).to.exist;
     expect(gumshoe._.storage('utm').medium).to.equal('');
 
     setTimeout(function () {

@@ -424,12 +424,28 @@
     var nevent = queue.shift(),
       transport = transports[nevent.transportName];
 
-    transport.send(nevent.data);
+    transport.send(nevent.data, function (err, result) {
+      // we care if an error was thrown, created, or captured
+      // if there is an error, add the item back into the queue
+      if (err) {
+        queue.push(nevent);
 
-    // put our newly modified queue in session storage
-    // we're doing this after we send the event to mitigate data loss
-    // in the event the request doesn't complete before the page changes
-    storage('queue', queue);
+        console.warn('Gumshoe: Retrying. Error received from transport: ' + nevent.transportName + ', for event: ' + nevent.eventName);
+      }
+
+      // put our newly modified queue in session storage
+      // we're doing this after we send the event to mitigate data loss
+      // in the event if the request doesn't complete before the page changes
+      storage('queue', queue);
+    });
+
+    if (transport.send.length === 1) {
+      // TEMP HACK: 0.1.x of tracking_api.gumshoe didn't accept a callback
+      // parameter, because we didn't care about the failure of an event.
+      // we need to support 0.1.x in the same old way while 0.2.x is being
+      // rolled out.
+      storage('queue', queue);
+    }
 
     setTimeout(nextEvent, gumshoe.options.queueTimeout);
   }

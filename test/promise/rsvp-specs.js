@@ -6,11 +6,11 @@ describe('Gumshoe Promise - rsvp.js', function() {
   var ready = false;
 
   it('should find RSVP', function () {
-    expect(RSVP).to.exist();
+    expect(RSVP).to.exist;
   });
 
   it('should not find Gumshoe', function () {
-    expect(window.gumshoe).to.not.exist();
+    expect(window.gumshoe).to.not.exist;
   });
 
   it('should setup the Promise for Gumshoe', function () {
