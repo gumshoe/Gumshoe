@@ -1,10 +1,12 @@
 # Gumshoe [![Build Status](https://travis-ci.org/gilt/Gumshoe.svg?branch=master)](https://travis-ci.org/gilt/Gumshoe)
 
+<img src="https://raw.github.com/gilt/gumshoe/master/logo.png" align="right" width="332px" />
+
 An analytics and event tracking sleuth.
 
 ## Background
 
-Companies of all sizes are heavily dependent upon analytics to improve the user experience and forecast varying business data points. Gilt has leveraged Google Analytics (henceforth known as GA) heavily, utilizing the data redirection feature of GA. At some point in late 2015, that feature will be no more. Gumshoe was built to fill that void and to extend upon the data-collection abilities of GA. 
+Companies of all sizes are heavily dependent upon analytics to improve the user experience and forecast varying business data points. Gilt has leveraged Google Analytics (henceforth known as GA) heavily, utilizing the data redirection feature of GA. At some point in late 2015, that feature will be no more. Gumshoe was built to fill that void and to extend upon the data-collection abilities of GA.
 
 ## Browser Support
 
@@ -49,7 +51,7 @@ Transports describe the way in which data is sent from Gumshoe to an endpoint wh
 
 **Event Name**
 
-An event name should be carefully considered, and all event names should be of the same format, tense, and general structure. At Gilt we use a dot-delimited event naming notation. eg. `'checkout.country.selected'`. 
+An event name should be carefully considered, and all event names should be of the same format, tense, and general structure. At Gilt we use a dot-delimited event naming notation. eg. `'checkout.country.selected'`.
 
 **Event Data**
 
@@ -83,4 +85,3 @@ Please take into consideration our formatting style when submitting pull request
 ## Support
 
 Please post support requests and bugs to the Github Issues page for this project.
-
