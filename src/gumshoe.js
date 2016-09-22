@@ -74,6 +74,7 @@
       transport: '',
       queueTimeout: 100
     },
+    localStore = store.namespace('gumshoe'),
     storage = store.namespace('gumshoe').session,
     queue = storage('queue') || [],
     transports = {};
@@ -83,6 +84,8 @@
   }
 
   function gumshoe (options) {
+    var clientUuid = localStore('clientUuid');
+
     options = extend({}, defaults, options);
 
     // always ensure options.transport is an array.
@@ -92,6 +95,15 @@
     else if (!isArray(options.transport)) {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].';
     }
+
+    // store a client id to identify a client long-term. Google Analytics uses
+    // the value, combined with other factors, to determine unique users. we
+    // duplicate the same kind of value to assist GA.
+    if (!clientUuid) {
+      localStore({ clientUuid: uuidv4() });
+    }
+
+    options.clientUuid = clientUuid;
 
     session(options.sessionFn);
 
@@ -355,6 +367,7 @@
   function send (eventName, eventData) {
     var pageData = collect(),
       baseData = {
+        clientUuid: gumshoe.options.clientUuid,
         eventName: eventName,
         eventData: eventData || {},
         gumshoe: '{package_version}',
@@ -499,6 +512,7 @@
   // setup some internal stuff for access
   gumshoe._ = {
     collect: collect,
+    localStorage: localStore,
     queryString: queryString,
     queue: queue,
     storage: storage,

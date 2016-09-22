@@ -37,6 +37,12 @@ describe('Gumshoe', function() {
     expect(gumshoe._.collect).to.exist;
   });
 
+  it('should store the client uuid', function () {
+    var store = gumshoe._.localStorage;
+    expect(store('clientUuid')).to.exist;
+    expect(store('clientUuid')).to.not.be.empty;
+  });
+
   it('should collect data', function () {
     data = gumshoe._.collect();
 
@@ -151,6 +157,7 @@ describe('Gumshoe', function() {
     expect(nevent.eventName).to.equal('page.view');
     expect(nevent.transportName).to.equal('spec-transport-legacy');
     expect(nevent.data).to.exist;
+    expect(nevent.data.clientUuid).to.not.be.empty;
     expect(nevent.data.eventData).to.exist;
     expect(nevent.data.pageData).to.exist;
     expect(nevent.data.timestamp).to.be.above(0);

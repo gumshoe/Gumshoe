@@ -1,6 +1,6 @@
 {
   "name": "Gumshoe",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "description": "An analytics and event tracking sleuth.",
   "keywords": [
     "tracking",
@@ -44,12 +44,13 @@
     "gulp-add-src": "^0.2.0",
     "gulp-concat": "^2.4.3",
     "gulp-file-insert": "^1.0.2",
-    "gulp-jshint": "^1.9.0",
-    "gulp-mocha": "^2.0.0",
-    "gulp-mocha-phantomjs": "^0.10.1",
+    "gulp-jshint": "^2.0.1",
+    "gulp-mocha": "^3.0.1",
+    "gulp-mocha-phantomjs": "^0.11.0",
     "gulp-rename": "^1.2.0",
     "gulp-replace": "^0.5.1",
-    "gulp-uglify": "^1.0.2",
+    "gulp-uglify": "^2.0.0",
+    "jshint": "^2.9.3",
     "jshint-stylish": "^2.0.1"
   }
 }

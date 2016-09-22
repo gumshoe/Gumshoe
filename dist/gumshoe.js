@@ -1055,6 +1055,7 @@ if (!Array.prototype.reduce) {
       transport: '',
       queueTimeout: 100
     },
+    localStore = store.namespace('gumshoe'),
     storage = store.namespace('gumshoe').session,
     queue = storage('queue') || [],
     transports = {};
@@ -1064,6 +1065,8 @@ if (!Array.prototype.reduce) {
   }
 
   function gumshoe (options) {
+    var clientUuid = localStore('clientUuid');
+
     options = extend({}, defaults, options);
 
     // always ensure options.transport is an array.
@@ -1073,6 +1076,15 @@ if (!Array.prototype.reduce) {
     else if (!isArray(options.transport)) {
       throw 'Gumeshoe: Transport property must be a [String] or [Array].';
     }
+
+    // store a client id to identify a client long-term. Google Analytics uses
+    // the value, combined with other factors, to determine unique users. we
+    // duplicate the same kind of value to assist GA.
+    if (!clientUuid) {
+      localStore({ clientUuid: uuidv4() });
+    }
+
+    options.clientUuid = clientUuid;
 
     session(options.sessionFn);
 
@@ -1336,9 +1348,10 @@ if (!Array.prototype.reduce) {
   function send (eventName, eventData) {
     var pageData = collect(),
       baseData = {
+        clientUuid: gumshoe.options.clientUuid,
         eventName: eventName,
         eventData: eventData || {},
-        gumshoe: '0.7.0',
+        gumshoe: '0.8.0',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1467,7 +1480,7 @@ if (!Array.prototype.reduce) {
   }
 
   // setup some static properties
-  gumshoe.version = '0.7.0';
+  gumshoe.version = '0.8.0';
   gumshoe.options = {};
 
   // setup some static methods
@@ -1480,6 +1493,7 @@ if (!Array.prototype.reduce) {
   // setup some internal stuff for access
   gumshoe._ = {
     collect: collect,
+    localStorage: localStore,
     queryString: queryString,
     queue: queue,
     storage: storage,
