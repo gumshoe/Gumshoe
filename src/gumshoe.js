@@ -100,7 +100,8 @@
     // the value, combined with other factors, to determine unique users. we
     // duplicate the same kind of value to assist GA.
     if (!clientUuid) {
-      localStore({ clientUuid: uuidv4() });
+      clientUuid = uuidv4();
+      localStore({ clientUuid: clientUuid });
     }
 
     options.clientUuid = clientUuid;

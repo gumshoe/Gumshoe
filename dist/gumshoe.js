@@ -1081,7 +1081,8 @@ if (!Array.prototype.reduce) {
     // the value, combined with other factors, to determine unique users. we
     // duplicate the same kind of value to assist GA.
     if (!clientUuid) {
-      localStore({ clientUuid: uuidv4() });
+      clientUuid = uuidv4();
+      localStore({ clientUuid: clientUuid });
     }
 
     options.clientUuid = clientUuid;
@@ -1351,7 +1352,7 @@ if (!Array.prototype.reduce) {
         clientUuid: gumshoe.options.clientUuid,
         eventName: eventName,
         eventData: eventData || {},
-        gumshoe: '0.8.0',
+        gumshoe: '0.8.1',
         pageData: pageData,
         sessionUuid: storage('uuid'),
         timestamp: (new Date()).getTime(),
@@ -1480,7 +1481,7 @@ if (!Array.prototype.reduce) {
   }
 
   // setup some static properties
-  gumshoe.version = '0.8.0';
+  gumshoe.version = '0.8.1';
   gumshoe.options = {};
 
   // setup some static methods
