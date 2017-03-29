@@ -1,4 +1,4 @@
-# Gumshoe [![Build Status](https://travis-ci.org/gilt/Gumshoe.svg?branch=master)](https://travis-ci.org/gilt/Gumshoe)
+# Gumshoe [![Build Status](https://travis-ci.org/gumshoe/Gumshoe.svg?branch=master)](https://travis-ci.org/gumshoe/Gumshoe)
 
 <img src="https://raw.github.com/gilt/gumshoe/master/logo.png" align="right" width="332px" />
 
