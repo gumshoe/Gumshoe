@@ -1,9 +1,14 @@
+sudo: false
 language: node_js
 node_js:
-  - "0.10"
-notifications:
-  email:
-    recipients:
-      - gumshoe@gilt.com
-    on_success: never  # default: change
-    on_failure: always # default: always
+  - '7.6'
+
+before_install:
+  - npm install -g gulp --loglevel=silent
+  - echo `realpath node_modules`
+
+script:
+  - gulp test
+
+matrix:
+  fast_finish: true
